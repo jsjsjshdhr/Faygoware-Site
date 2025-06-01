@@ -5,7 +5,166 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Faygoware</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body {
+      background: linear-gradient(to top, #000, #181818);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding-top: 2rem;
+      font-family: 'Gotham', Arial, sans-serif;
+      color: white;
+    }
+    .button {
+      border: 1px solid white;
+      background: linear-gradient(to top, #000, #181818);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.4s ease-in-out, border-color 0.4s ease-in-out,
+        box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out;
+      filter: none;
+      box-shadow: none;
+      cursor: pointer;
+      font-family: 'Gotham', Arial, sans-serif;
+
+      /* Disable text selection on buttons */
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    .button:active {
+      transform: scale(0.95);
+    }
+    .middle-button {
+      transform: scale(1.1);
+    }
+    .middle-button:hover {
+      transform: scale(1.15) translateY(-3px);
+    }
+    .middle-button:active {
+      transform: scale(1.05);
+    }
+    .rectangle-image {
+      width: 600px;
+      height: 300px;
+      border: 1px solid white;
+      object-fit: cover;
+      margin-bottom: 2rem;
+      position: relative;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 153, 255, 0);
+
+      /* Disable text/image selection */
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .rectangle-image:hover {
+      box-shadow: 0 0 30px rgba(0, 153, 255, 0.8);
+    }
+    .rectangle-image img {
+      border-radius: 1rem;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+
+      /* Disable image selection */
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
+    .glow-layer {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: transparent;
+      box-shadow: 0 0 20px rgba(0, 153, 255, 0);
+      transition: box-shadow 0.3s ease;
+      z-index: -1;
+      border-radius: 1rem;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    .rectangle-image:hover .glow-layer {
+      box-shadow: 0 0 30px rgba(0, 153, 255, 0.8);
+    }
+    .discord-button:hover {
+      border-color: #5865f2;
+      filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8));
+    }
+    .discord-button {
+      filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0));
+    }
+    .script-button:hover {
+      border-color: #22c55e;
+      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+    }
+    .script-button {
+      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0));
+    }
+    .youtube-button:hover {
+      border-color: #ff0000;
+      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.8));
+    }
+    .youtube-button {
+      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0));
+    }
+
+    /* Gradient from bottom to top */
+    .animated-gradient-title {
+      font-family: 'Gotham', Arial, sans-serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+
+      background: linear-gradient(to top, #bbb, #fff);
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+
+      background-clip: text;
+      color: transparent;
+
+      margin-bottom: 2rem;
+      display: inline-block;
+      user-select: none;
+      position: relative;
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
+      cursor: pointer;
+
+      /* Blue glow outline */
+      text-shadow:
+        0 0 6px rgba(0, 153, 255, 0.8),
+        0 0 10px rgba(0, 153, 255, 0.6),
+        0 0 20px rgba(0, 153, 255, 0.4);
+    }
+
+    .animated-gradient-title:hover {
+      transform: scale(1.1);
+      /* stronger glow on hover */
+      text-shadow:
+        0 0 12px rgba(0, 153, 255, 1),
+        0 0 20px rgba(0, 153, 255, 0.8),
+        0 0 30px rgba(0, 153, 255, 0.6);
+    }
+  </style>
 </head>
 <body>
   <h1 class="animated-gradient-title">
@@ -37,6 +196,38 @@
 
   <audio id="clickSound" src="/computer.mp3"></audio>
 
-  <script src="/script.js"></script>
+  <script>
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    function playClickSound() {
+      const e = document.getElementById("clickSound");
+      e.currentTime = 0;
+      e.play().catch((e) => console.log("Audio playback failed:", e));
+    }
+    const image = document.getElementById("dynamicImage"),
+      glowLayer = document.getElementById("glowLayer");
+    image.addEventListener("mousemove", (e) => {
+      const t = image.getBoundingClientRect(),
+        n = e.clientX - t.left - t.width / 2,
+        o = e.clientY - t.top - t.height / 2,
+        i = 20,
+        r = 30,
+        a = 10,
+        l = 15;
+      const s = -(n / t.width) * i,
+        d = (o / t.height) * i,
+        c = -(n / t.width) * r,
+        u = -(n / t.width) * a,
+        f = (o / t.height) * a,
+        m = -(n / t.width) * l;
+      image.style.transform = `perspective(1000px) skewX(${s}deg) skewY(${d}deg) rotateY(${c}deg)`;
+      glowLayer.style.transform = `perspective(1000px) skewX(${u}deg) skewY(${f}deg) rotateY(${m}deg)`;
+    });
+    image.addEventListener("mouseleave", () => {
+      image.style.transform = "perspective(1000px) skewX(0deg) skewY(0deg) rotateY(0deg)";
+      glowLayer.style.transform = "perspective(1000px) skewX(0deg) skewY(0deg) rotateY(0deg)";
+    });
+  </script>
 </body>
 </html>
