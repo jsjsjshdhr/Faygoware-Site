@@ -94,105 +94,108 @@
 
     <audio id="clickSound" src="/computer.mp3"></audio>
 
-    <script>
-        // Disable right-click
-        document.addEventListener('contextmenu', event => event.preventDefault());
+<script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
 
-        function generateRandomString(length) {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            return result;
+    // Generate a unique device ID stored in localStorage
+    function getDeviceId() {
+        let id = localStorage.getItem('deviceId');
+        if (!id) {
+            id = 'dev-' + crypto.randomUUID();
+            localStorage.setItem('deviceId', id);
+        }
+        return id;
+    }
+
+    function getMinuteBasedKey() {
+        const now = new Date();
+        const deviceId = getDeviceId();
+
+        // Use current minute and device ID to generate hash
+        const timeString = now.toISOString().slice(0, 16); // e.g., "2025-06-05T14:37"
+        const baseString = deviceId + timeString;
+
+        let hash = 0;
+        for (let i = 0; i < baseString.length; i++) {
+            hash = ((hash << 5) - hash) + baseString.charCodeAt(i);
+            hash |= 0;
         }
 
-        function updateTitle() {
-            const titleElement = document.getElementById('dynamicTitle');
-            const randomTitle = generateRandomString(12);
-            titleElement.textContent = randomTitle;
-            document.title = `🔑 ${randomTitle} | Daily Key`;
+        return "Faygoware_" + Math.abs(hash).toString(16).padStart(8, '0').toUpperCase();
+    }
+
+    function updateKeyDisplay() {
+        const newKey = getMinuteBasedKey();
+        const keyDisplay = document.getElementById('key');
+        keyDisplay.textContent = newKey;
+        localStorage.setItem('currentKey', newKey);
+    }
+
+    function copyKey() {
+        const keyText = document.getElementById('key').textContent;
+        const clickSound = document.getElementById("clickSound");
+        clickSound.currentTime = 0;
+        clickSound.play().catch((e) => console.log("Audio playback failed:", e));
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(keyText).catch(() => fallbackCopy(keyText));
+        } else {
+            fallbackCopy(keyText);
         }
+    }
 
-        function generateFakePath() {
-            const folders = ['system', 'usr', 'bin', 'etc', 'var', 'tmp', 'home', 'data', 'logs', 'config'];
-            const files = ['keygen', 'secure', 'auth', 'crypto', 'access', 'token', 'session'];
-            const extensions = ['.dat', '.key', '.conf', '.log', '.txt'];
-            const pathLength = Math.floor(Math.random() * 3) + 2;
-            let path = '/';
-            for (let i = 0; i < pathLength; i++) {
-                path += folders[Math.floor(Math.random() * folders.length)] + '/';
-            }
-            const fileName = files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
-            path += fileName;
-
-            document.getElementById('fakePath').textContent = `Path: ${path}`;
-            history.replaceState(null, '', path); // Change URL without reload
-            document.title = `🔐 ${fileName} | Daily Key`; // Change tab title
+    function fallbackCopy(text) {
+        try {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        } catch {
         }
+    }
 
-        function generateKey() {
-            const now = new Date();
-            const dateString = now.toISOString().split('T')[0];
-            let hash = 0;
-            for (let i = 0; i < dateString.length; i++) {
-                hash = ((hash << 5) - hash) + dateString.charCodeAt(i);
-                hash = hash >>> 0;
-            }
-            const key = "Faygoware_" + (hash % 0x100000000).toString(16).padStart(8, '0').toUpperCase();
-            document.getElementById('key').textContent = key;
+    function updateTitle() {
+        const titleElement = document.getElementById('dynamicTitle');
+        const randomTitle = generateRandomString(12);
+        titleElement.textContent = randomTitle;
+        document.title = `🔑 ${randomTitle} | Daily Key`;
+    }
+
+    function generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+    }
+
+    function generateFakePath() {
+        const folders = ['system', 'usr', 'bin', 'etc', 'var', 'tmp', 'home', 'data', 'logs', 'config'];
+        const files = ['keygen', 'secure', 'auth', 'crypto', 'access', 'token', 'session'];
+        const extensions = ['.dat', '.key', '.conf', '.log', '.txt'];
+        const pathLength = Math.floor(Math.random() * 3) + 2;
+        let path = '/';
+        for (let i = 0; i < pathLength; i++) {
+            path += folders[Math.floor(Math.random() * folders.length)] + '/';
         }
+        const fileName = files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
+        path += fileName;
 
-        function copyKey() {
-            const keyText = document.getElementById('key').textContent;
-            const clickSound = document.getElementById("clickSound");
-            clickSound.currentTime = 0;
-            clickSound.play().catch((e) => console.log("Audio playback failed:", e));
+        document.getElementById('fakePath').textContent = `Path: ${path}`;
+        history.replaceState(null, '', path);
+        document.title = `🔐 ${fileName} | Daily Key`;
+    }
 
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(keyText).then(() => {
-                }).catch(err => {
-                    fallbackCopy(keyText);
-                });
-            } else {
-                fallbackCopy(keyText);
-            }
-        }
+    // Initial setup
+    updateKeyDisplay();
+    generateFakePath();
 
-        function fallbackCopy(text) {
-            try {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.select();
-                const success = document.execCommand('copy');
-                document.body.removeChild(textarea);
-                if (success) {
-                    alert('Key copied to clipboard!');
-                } else {
-                    alert('Failed to copy key. Please copy manually.');
-                }
-            } catch (err) {
-                alert('Failed to copy key. Please copy manually.');
-            }
-        }
-
-        // Initialize
-        generateKey();
-        generateFakePath();
-
-        // Dynamic changes
-        setInterval(updateTitle, 200);          // Update animated title
-        setInterval(generateFakePath, 200);    // Change path and tab title
-        setInterval(() => {
-            const now = new Date();
-            if (now.getHours() === 0 && now.getMinutes() === 0) {
-                generateKey();
-            }
-        }, 60000);
-    </script>
+    // Update every minute
+    setInterval(updateKeyDisplay, 60000);
+    setInterval(updateTitle, 200);
+    setInterval(generateFakePath, 200);
+</script>
 </body>
 </html>
