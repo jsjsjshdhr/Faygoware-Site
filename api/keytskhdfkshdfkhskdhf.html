@@ -151,7 +151,6 @@
 
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(keyText).then(() => {
-                    alert('Key copied to clipboard!');
                 }).catch(err => {
                     fallbackCopy(keyText);
                 });
