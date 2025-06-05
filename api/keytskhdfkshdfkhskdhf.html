@@ -92,7 +92,7 @@
         <div id="fakePath"></div>
     </div>
 
-    <audio id="clickSound" src="./computer.mp3"></audio>
+    <audio id="clickSound" src="/computer.mp3"></audio>
 
     <script>
         // Disable right-click
@@ -111,7 +111,7 @@
             const titleElement = document.getElementById('dynamicTitle');
             const randomTitle = generateRandomString(12);
             titleElement.textContent = randomTitle;
-            document.title = 🔑 ${randomTitle} | Daily Key;
+            document.title = `🔑 ${randomTitle} | Daily Key`;
         }
 
         function generateFakePath() {
@@ -126,9 +126,9 @@
             const fileName = files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
             path += fileName;
 
-            document.getElementById('fakePath').textContent = Path: ${path};
+            document.getElementById('fakePath').textContent = `Path: ${path}`;
             history.replaceState(null, '', path); // Change URL without reload
-            document.title = 🔐 ${fileName} | Daily Key; // Change tab title
+            document.title = `🔐 ${fileName} | Daily Key`; // Change tab title
         }
 
         function generateKey() {
