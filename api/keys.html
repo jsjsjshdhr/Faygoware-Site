@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Saved Keys (Lua Format)</title>
+    <style>
+        body {
+            background: #121212;
+            color: #cfcfcf;
+            font-family: monospace, monospace;
+            padding: 2rem;
+            white-space: pre-wrap;
+        }
+        h1 {
+            color: #22c55e;
+            margin-bottom: 1rem;
+        }
+        button {
+            background: #22c55e;
+            border: none;
+            color: black;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        button:hover {
+            background: #16a34a;
+        }
+    </style>
+</head>
+<body>
+    <h1>Saved Keys in Lua Format</h1>
+    <button onclick="clearKeys()">Clear Saved Keys</button>
+    <pre id="luaOutput">Loading...</pre>
+
+<script>
+    function formatKeysAsLua(keys) {
+        const lines = ['return {'];
+        for (const key of keys) {
+            lines.push(`    "${key}",`);
+        }
+        lines.push('}');
+        return lines.join('\n');
+    }
+
+    function loadKeys() {
+        const keys = JSON.parse(localStorage.getItem('allKeys') || '[]');
+        if (keys.length === 0) {
+            return '-- No keys saved yet.';
+        }
+        return formatKeysAsLua(keys);
+    }
+
+    function render() {
+        document.getElementById('luaOutput').textContent = loadKeys();
+    }
+
+    function clearKeys() {
+        if (confirm('Clear all saved keys?')) {
+            localStorage.removeItem('allKeys');
+            render();
+        }
+    }
+
+    render();
+</script>
+</body>
+</html>
