@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Shared Key Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #key {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Daily Shared Key</h1>
+        <p>This key is the same for everyone and updates daily.</p>
+        <div id="key">Generating...</div>
+        <button onclick="generateKey()">Refresh Key</button>
+    </div>
+
+    <script>
+        function generateKey() {
+            const now = new Date();
+            // Use date (YYYY-MM-DD) as seed for consistency across users
+            const dateString = now.toISOString().split('T')[0];
+            // Simple hash function to create a consistent key from date
+            let hash = 0;
+            for (let i = 0; i < dateString.length; i++) {
+                hash = ((hash << 5) - hash) + dateString.charCodeAt(i);
+                hash = hash >>> 0; // Convert to unsigned 32-bit integer
+            }
+            // Convert to 8-character hexadecimal
+            const key = (hash % 0x100000000).toString(16).padStart(8, '0').toUpperCase();
+            document.getElementById('key').textContent = key;
+        }
+
+        // Generate key on page load
+        generateKey();
+
+        // Optional: Auto-refresh key at midnight
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0) {
+                generateKey();
+            }
+        }, 60000); // Check every minute
+    </script>
+</body>
+</html>
