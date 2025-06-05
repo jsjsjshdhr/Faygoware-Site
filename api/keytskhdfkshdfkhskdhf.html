@@ -4,71 +4,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Shared Key Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            background: linear-gradient(to top, #000, #181818);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            padding-top: 2rem;
+            font-family: 'Gotham', Arial, sans-serif;
+            color: white;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         .container {
             text-align: center;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            background: linear-gradient(to top, #000, #181818);
+            border: 1px solid white;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            transition: box-shadow 0.3s ease;
+        }
+        .container:hover {
+            box-shadow: 0 0 20px rgba(0, 153, 255, 0.8);
         }
         #key {
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: bold;
-            color: #333;
-            margin: 20px 0;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007bff;
             color: white;
-            border: none;
-            border-radius: 5px;
+            margin: 1.5rem 0;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(to top, #000, #181818);
+            border: 1px solid white;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            transition: box-shadow 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
-        button:hover {
-            background-color: #0056b3;
+        #key:hover {
+            box-shadow: 0 0 15px rgba(0, 153, 255, 0.8);
+        }
+        .button {
+            border: 1px solid white;
+            background: linear-gradient(to top, #000, #181818);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: transform 0.4s ease-in-out, border-color 0.4s ease-in-out,
+                box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out;
+            filter: none;
+            box-shadow: none;
+            cursor: pointer;
+            font-family: 'Gotham', Arial, sans-serif;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border-color: #22c55e;
+            filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+        }
+        .button:active {
+            transform: scale(0.95);
+        }
+        .animated-gradient-title {
+            font-family: 'Gotham', Arial, sans-serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(to top, #bbb, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 2rem;
+            display: inline-block;
+            user-select: none;
+            position: relative;
+            transition: transform 0.3s ease, text-shadow 0.3s ease;
+            cursor: pointer;
+            text-shadow:
+                0 0 6px rgba(0, 153, 255, 0.8),
+                0 0 10px rgba(0, 153, 255, 0.6),
+                0 0 20px rgba(0, 153, 255, 0.4);
+        }
+        .animated-gradient-title:hover {
+            transform: scale(1.1);
+            text-shadow:
+                0 0 12px rgba(0, 153, 255, 1),
+                0 0 20px rgba(0, 153, 255, 0.8),
+                0 0 30px rgba(0, 153, 255, 0.6);
         }
     </style>
 </head>
 <body>
+    <h1 class="animated-gradient-title">Daily Shared Key</h1>
     <div class="container">
-        <h1>Daily Shared Key</h1>
-        <p>This key is the same for everyone and updates daily.</p>
-        <div id="key">Generating...</div>
-        <button onclick="generateKey()">Refresh Key</button>
+        <p class="text-white text-lg mb-4">This key is the same for everyone and updates daily.</p>
+        <div id="key" class="px-4 py-2">Generating...</div>
+        <button class="button" onclick="copyKey()">Copy Key</button>
     </div>
 
+    <audio id="clickSound" src="./computer.mp3"></audio>
+
     <script>
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
         function generateKey() {
             const now = new Date();
-            // Use date (YYYY-MM-DD) as seed for consistency across users
             const dateString = now.toISOString().split('T')[0];
-            // Simple hash function to create a consistent key from date
             let hash = 0;
             for (let i = 0; i < dateString.length; i++) {
                 hash = ((hash << 5) - hash) + dateString.charCodeAt(i);
-                hash = hash >>> 0; // Convert to unsigned 32-bit integer
+                hash = hash >>> 0;
             }
-            // Convert to 8-character hexadecimal
-            const key = (hash % 0x100000000).toString(16).padStart(8, '0').toUpperCase();
+            const key = "Faygoware_" + (hash % 0x100000000).toString(16).padStart(8, '0').toUpperCase();
             document.getElementById('key').textContent = key;
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById('key').textContent;
+            const clickSound = document.getElementById("clickSound");
+            clickSound.currentTime = 0;
+            clickSound.play().catch((e) => console.log("Audio playback failed:", e));
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.write(keyText).then(() => {
+                    alert('Key copied to clipboard!');
+                }).catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    fallbackCopy(keyText);
+                });
+            } else {
+                fallbackCopy(keyText);
+            }
+        }
+
+        function fallbackCopy(text) {
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                const success = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                if (success) {
+                    alert('Key copied to clipboard!');
+                } else {
+                    alert('Failed to copy key. Please select and copy manually.');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                alert('Failed to copy key. Please select and copy manually.');
+            }
         }
 
         // Generate key on page load
         generateKey();
 
-        // Optional: Auto-refresh key at midnight
+        // Auto-refresh key at midnight
         setInterval(() => {
             const now = new Date();
             if (now.getHours() === 0 && now.getMinutes() === 0) {
