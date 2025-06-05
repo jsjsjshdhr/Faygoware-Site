@@ -110,14 +110,21 @@
                 0 0 20px rgba(0, 153, 255, 0.8),
                 0 0 30px rgba(0, 153, 255, 0.6);
         }
+        #fakePath {
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 1rem;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
-    <h1 class="animated-gradient-title">Daily Shared Key</h1>
+    <h1 class="animated-gradient-title" id="dynamicTitle">Daily Shared Key</h1>
     <div class="container">
         <p class="text-white text-lg mb-4">This key is the same for everyone and updates daily.</p>
         <div id="key" class="px-4 py-2">Generating...</div>
         <button class="button" onclick="copyKey()">Copy Key</button>
+        <div id="fakePath"></div>
     </div>
 
     <audio id="clickSound" src="./computer.mp3"></audio>
@@ -125,6 +132,33 @@
     <script>
         // Disable right-click context menu
         document.addEventListener('contextmenu', event => event.preventDefault());
+
+        function generateRandomString(length) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        function updateTitle() {
+            const titleElement = document.getElementById('dynamicTitle');
+            titleElement.textContent = generateRandomString(12);
+        }
+
+        function generateFakePath() {
+            const folders = ['system', 'usr', 'bin', 'etc', 'var', 'tmp', 'home', 'data', 'logs', 'config'];
+            const files = ['keygen', 'secure', 'auth', 'crypto', 'access', 'token', 'session'];
+            const extensions = ['.dat', '.key', '.conf', '.log', '.txt'];
+            const pathLength = Math.floor(Math.random() * 3) + 2;
+            let path = '/';
+            for (let i = 0; i < pathLength; i++) {
+                path += folders[Math.floor(Math.random() * folders.length)] + '/';
+            }
+            path += files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
+            document.getElementById('fakePath').textContent = `Path: ${path}`;
+        }
 
         function generateKey() {
             const now = new Date();
@@ -178,8 +212,15 @@
             }
         }
 
-        // Generate key on page load
+        // Generate key and fake path on page load
         generateKey();
+        generateFakePath();
+
+        // Update title every 0.2 seconds
+        setInterval(updateTitle, 200);
+
+        // Update fake path every 5 seconds
+        setInterval(generateFakePath, 5000);
 
         // Auto-refresh key at midnight
         setInterval(() => {
@@ -191,6 +232,3 @@
     </script>
 </body>
 </html>
-
-
-make the title change to a random string every .2 secs and create a random fake path
