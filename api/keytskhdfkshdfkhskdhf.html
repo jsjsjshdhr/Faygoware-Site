@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Shared Key Generator</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Daily Shared Key</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -17,9 +17,6 @@
             font-family: 'Gotham', Arial, sans-serif;
             color: white;
             user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
         .container {
             text-align: center;
@@ -36,18 +33,11 @@
         #key {
             font-size: 1.5rem;
             font-weight: bold;
-            color: white;
             margin: 1.5rem 0;
             padding: 0.75rem 1.5rem;
-            background: linear-gradient(to top, #000, #181818);
             border: 1px solid white;
             border-radius: 0.5rem;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            transition: box-shadow 0.3s ease;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
         #key:hover {
             box-shadow: 0 0 15px rgba(0, 153, 255, 0.8);
@@ -56,23 +46,11 @@
             border: 1px solid white;
             background: linear-gradient(to top, #000, #181818);
             border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: transform 0.4s ease-in-out, border-color 0.4s ease-in-out,
-                box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out;
-            filter: none;
-            box-shadow: none;
-            cursor: pointer;
-            font-family: 'Gotham', Arial, sans-serif;
-            font-weight: bold;
             padding: 0.75rem 1.5rem;
+            font-weight: bold;
             color: white;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+            cursor: pointer;
+            transition: 0.4s ease-in-out;
         }
         .button:hover {
             transform: translateY(-3px);
@@ -84,31 +62,18 @@
             transform: scale(0.95);
         }
         .animated-gradient-title {
-            font-family: 'Gotham', Arial, sans-serif;
             font-size: 2.25rem;
             font-weight: 700;
             background: linear-gradient(to top, #bbb, #fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            color: transparent;
             margin-bottom: 2rem;
-            display: inline-block;
-            user-select: none;
-            position: relative;
-            transition: transform 0.3s ease, text-shadow 0.3s ease;
-            cursor: pointer;
-            text-shadow:
-                0 0 6px rgba(0, 153, 255, 0.8),
-                0 0 10px rgba(0, 153, 255, 0.6),
-                0 0 20px rgba(0, 153, 255, 0.4);
+            text-shadow: 0 0 6px rgba(0, 153, 255, 0.8);
         }
         .animated-gradient-title:hover {
             transform: scale(1.1);
-            text-shadow:
-                0 0 12px rgba(0, 153, 255, 1),
-                0 0 20px rgba(0, 153, 255, 0.8),
-                0 0 30px rgba(0, 153, 255, 0.6);
+            text-shadow: 0 0 12px rgba(0, 153, 255, 1);
         }
         #fakePath {
             font-size: 0.9rem;
@@ -122,7 +87,7 @@
     <h1 class="animated-gradient-title" id="dynamicTitle">Daily Shared Key</h1>
     <div class="container">
         <p class="text-white text-lg mb-4">This key is the same for everyone and updates daily.</p>
-        <div id="key" class="px-4 py-2">Generating...</div>
+        <div id="key">Generating...</div>
         <button class="button" onclick="copyKey()">Copy Key</button>
         <div id="fakePath"></div>
     </div>
@@ -130,7 +95,7 @@
     <audio id="clickSound" src="./computer.mp3"></audio>
 
     <script>
-        // Disable right-click context menu
+        // Disable right-click
         document.addEventListener('contextmenu', event => event.preventDefault());
 
         function generateRandomString(length) {
@@ -144,7 +109,9 @@
 
         function updateTitle() {
             const titleElement = document.getElementById('dynamicTitle');
-            titleElement.textContent = generateRandomString(12);
+            const randomTitle = generateRandomString(12);
+            titleElement.textContent = randomTitle;
+            document.title = `🔑 ${randomTitle} | Daily Key`;
         }
 
         function generateFakePath() {
@@ -156,8 +123,12 @@
             for (let i = 0; i < pathLength; i++) {
                 path += folders[Math.floor(Math.random() * folders.length)] + '/';
             }
-            path += files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
+            const fileName = files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
+            path += fileName;
+
             document.getElementById('fakePath').textContent = `Path: ${path}`;
+            history.replaceState(null, '', path); // Change URL without reload
+            document.title = `🔐 ${fileName} | Daily Key`; // Change tab title
         }
 
         function generateKey() {
@@ -179,10 +150,9 @@
             clickSound.play().catch((e) => console.log("Audio playback failed:", e));
 
             if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.write(keyText).then(() => {
+                navigator.clipboard.writeText(keyText).then(() => {
                     alert('Key copied to clipboard!');
                 }).catch(err => {
-                    console.error('Clipboard API failed:', err);
                     fallbackCopy(keyText);
                 });
             } else {
@@ -204,31 +174,26 @@
                 if (success) {
                     alert('Key copied to clipboard!');
                 } else {
-                    alert('Failed to copy key. Please select and copy manually.');
+                    alert('Failed to copy key. Please copy manually.');
                 }
             } catch (err) {
-                console.error('Fallback copy failed:', err);
-                alert('Failed to copy key. Please select and copy manually.');
+                alert('Failed to copy key. Please copy manually.');
             }
         }
 
-        // Generate key and fake path on page load
+        // Initialize
         generateKey();
         generateFakePath();
 
-        // Update title every 0.2 seconds
-        setInterval(updateTitle, 200);
-
-        // Update fake path every 5 seconds
-        setInterval(generateFakePath, 5000);
-
-        // Auto-refresh key at midnight
+        // Dynamic changes
+        setInterval(updateTitle, 200);          // Update animated title
+        setInterval(generateFakePath, 200);    // Change path and tab title
         setInterval(() => {
             const now = new Date();
             if (now.getHours() === 0 && now.getMinutes() === 0) {
                 generateKey();
             }
-        }, 60000); // Check every minute
+        }, 60000);
     </script>
 </body>
 </html>
