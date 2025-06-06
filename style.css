@@ -1,158 +1,435 @@
-body {
-  background: linear-gradient(to top, #000, #181818);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0;
-  padding-top: 2rem;
-  font-family: 'Gotham', Arial, sans-serif;
-  color: white;
-}
-.button {
-  border: 1px solid white;
-  background: linear-gradient(to top, #000, #181818);
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: transform 0.4s ease-in-out, border-color 0.4s ease-in-out,
-    box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out;
-  filter: none;
-  box-shadow: none;
-  cursor: pointer;
-  font-family: 'Gotham', Arial, sans-serif;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daily Shared Key</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to top, #000, #181818);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding-top: 2rem;
+      font-family: 'Gotham', Arial, sans-serif;
+      color: white;
+      user-select: none;
+    }
 
-  /* Disable text selection on buttons */
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-.button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-.button:active {
-  transform: scale(0.95);
-}
-.middle-button {
-  transform: scale(1.1);
-}
-.middle-button:hover {
-  transform: scale(1.15) translateY(-3px);
-}
-.middle-button:active {
-  transform: scale(1.05);
-}
-.rectangle-image {
-  width: 600px;
-  height: 300px;
-  border: 1px solid white;
-  object-fit: cover;
-  margin-bottom: 2rem;
-  position: relative;
-  border-radius: 1rem;
-  box-shadow: 0 0 20px rgba(0, 153, 255, 0);
+    .button {
+      border: 1px solid white;
+      background: linear-gradient(to top, #000, #181818);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.4s ease-in-out, border-color 0.4s ease-in-out,
+        box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out;
+      filter: none;
+      box-shadow: none;
+      cursor: pointer;
+      font-family: 'Gotham', Arial, sans-serif;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      user-select: none;
+      position: relative; /* needed for checkmark overlay */
+      overflow: visible;
+    }
 
-  /* Disable text/image selection */
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-}
-.rectangle-image:hover {
-  box-shadow: 0 0 30px rgba(0, 153, 255, 0.8);
-}
-.rectangle-image img {
-  border-radius: 1rem;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
 
-  /* Disable image selection */
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -webkit-user-drag: none;
-  user-drag: none;
-}
-.glow-layer {
-  position: absolute;
-  top: -5px;
-  left: -5px;
-  right: -5px;
-  bottom: -5px;
-  background: transparent;
-  box-shadow: 0 0 20px rgba(0, 153, 255, 0);
-  transition: box-shadow 0.3s ease;
-  z-index: -1;
-  border-radius: 1rem;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-.rectangle-image:hover .glow-layer {
-  box-shadow: 0 0 30px rgba(0, 153, 255, 0.8);
-}
-.discord-button:hover {
-  border-color: #5865f2;
-  filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8));
-}
-.discord-button {
-  filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0));
-}
-.script-button:hover {
-  border-color: #22c55e;
-  filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
-}
-.script-button {
-  filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0));
-}
-.youtube-button:hover {
-  border-color: #ff0000;
-  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.8));
-}
-.youtube-button {
-  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0));
-}
+    .button:active {
+      transform: scale(0.95);
+    }
 
-/* Gradient from bottom to top */
-.animated-gradient-title {
-  font-family: 'Gotham', Arial, sans-serif;
-  font-size: 2.25rem;
-  font-weight: 700;
+    .middle-button {
+      transform: scale(1.1);
+    }
 
-  background: linear-gradient(to top, #bbb, #fff);
+    .middle-button:hover {
+      transform: scale(1.15) translateY(-3px);
+    }
 
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+    .middle-button:active {
+      transform: scale(1.05);
+    }
 
-  background-clip: text;
-  color: transparent;
+    .rectangle-image {
+      width: 600px;
+      height: 300px;
+      border: 1px solid white;
+      object-fit: cover;
+      margin-bottom: 2rem;
+      position: relative;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 153, 255, 0);
+      user-select: none;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
 
-  margin-bottom: 2rem;
-  display: inline-block;
-  user-select: none;
-  position: relative;
-  transition: transform 0.3s ease, text-shadow 0.3s ease;
-  cursor: pointer;
+    .rectangle-image:hover {
+      box-shadow: 0 0 30px rgba(0, 153, 255, 0.8);
+    }
 
-  /* Blue glow outline */
-  text-shadow:
-    0 0 6px rgba(0, 153, 255, 0.8),
-    0 0 10px rgba(0, 153, 255, 0.6),
-    0 0 20px rgba(0, 153, 255, 0.4);
-}
+    .rectangle-image img {
+      border-radius: 1rem;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
 
-.animated-gradient-title:hover {
-  transform: scale(1.1);
-  /* stronger glow on hover */
-  text-shadow:
-    0 0 12px rgba(0, 153, 255, 1),
-    0 0 20px rgba(0, 153, 255, 0.8),
-    0 0 30px rgba(0, 153, 255, 0.6);
-}
+    .glow-layer {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: transparent;
+      box-shadow: 0 0 20px rgba(0, 153, 255, 0);
+      transition: box-shadow 0.3s ease;
+      z-index: -1;
+      border-radius: 1rem;
+      user-select: none;
+    }
+
+    .rectangle-image:hover .glow-layer {
+      box-shadow: 0 0 30px rgba(0, 153, 255, 0.8);
+    }
+
+    .discord-button:hover {
+      border-color: #5865f2;
+      filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8));
+    }
+
+    .discord-button {
+      filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0));
+    }
+
+    .script-button:hover {
+      border-color: #22c55e;
+      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+    }
+
+    .script-button {
+      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0));
+    }
+
+    .youtube-button:hover {
+      border-color: #ff0000;
+      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.8));
+    }
+
+    .youtube-button {
+      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0));
+    }
+
+    /* Gradient from bottom to top */
+    .animated-gradient-title {
+      font-family: 'Gotham', Arial, sans-serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+
+      background: linear-gradient(to top, #bbb, #fff);
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+
+      background-clip: text;
+      color: transparent;
+
+      margin-bottom: 2rem;
+      display: inline-block;
+      user-select: none;
+      position: relative;
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
+      cursor: pointer;
+
+      /* Blue glow outline */
+      text-shadow:
+        0 0 6px rgba(0, 153, 255, 0.8),
+        0 0 10px rgba(0, 153, 255, 0.6),
+        0 0 20px rgba(0, 153, 255, 0.4);
+    }
+
+    .animated-gradient-title:hover {
+      transform: scale(1.1);
+      /* stronger glow on hover */
+      text-shadow:
+        0 0 12px rgba(0, 153, 255, 1),
+        0 0 20px rgba(0, 153, 255, 0.8),
+        0 0 30px rgba(0, 153, 255, 0.6);
+    }
+
+    .container {
+      text-align: center;
+      padding: 3rem;
+      background: linear-gradient(to top, #000, #181818);
+      border: 1px solid white;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 600px;
+      user-select: none;
+    }
+
+    #key {
+      font-weight: 700;
+      margin: 2rem 0;
+      padding: 2rem;
+      font-size: 1.5rem;
+      background: #111;
+      border: 1px solid white;
+      border-radius: 0.75rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      font-family: monospace;
+      user-select: all;
+      display: inline-block;
+      min-width: 300px;
+    }
+
+    #fakePath {
+      font-size: 0.9rem;
+      color: #999;
+      margin-top: 1rem;
+      font-family: monospace;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      user-select: none;
+    }
+
+    .modal-content {
+      background: linear-gradient(to top, #000, #181818);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid white;
+      text-align: center;
+      width: 90%;
+      max-width: 450px;
+      user-select: none;
+    }
+
+    .error {
+      color: #ff4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .blurred {
+      filter: blur(1.5px);
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .checkmark {
+      position: absolute;
+      top: -28px;
+      right: 50%;
+      transform: translateX(50%);
+      font-size: 2.4rem;
+      color: #22c55e;
+      text-shadow:
+        0 0 6px #22c55e,
+        0 0 10px #22c55e,
+        0 0 20px #22c55e,
+        0 0 30px #22c55e;
+      pointer-events: none;
+      user-select: none;
+      display: none;
+      background: rgba(34, 197, 94, 0.15);
+      border-radius: 50%;
+      padding: 2px 8px;
+      filter: drop-shadow(0 0 8px #22c55e);
+      z-index: 10;
+    }
+
+    /* Copy button inside key */
+    .key-copy-btn {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      align-self: center;
+      cursor: pointer;
+      font-weight: 700;
+      border: 1px solid white;
+      background: linear-gradient(to top, #000, #181818);
+      border-radius: 0.5rem;
+      transition: transform 0.4s ease-in-out, border-color 0.4s ease-in-out,
+        box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out;
+    }
+
+    .key-copy-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .key-copy-btn:active {
+      transform: scale(0.95);
+    }
+
+  </style>
+</head>
+<body>
+  <h1 class="animated-gradient-title" id="dynamicTitle" tabindex="0">Faygoware Key</h1>
+
+  <div class="container">
+    <p class="text-white text-lg mb-4" style="user-select:none;">This key is the same for everyone and updates daily.</p>
+    <div id="key" style="display: none;"></div>
+    <button class="button middle-button" onclick="showVerificationModal()">Get Key</button>
+    <div id="fakePath"></div>
+  </div>
+
+  <div id="verificationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <h2 class="text-xl mb-4" id="modalTitle">Verify to Access Key</h2>
+      <p class="mb-4">Click both links below to join our Discord server and subscribe to our YouTube channel to unlock the key.</p>
+
+      <div style="position: relative; display: inline-block; margin-bottom: 1.5rem;">
+        <div id="checkmark-discord" class="checkmark" aria-hidden="true">✅</div>
+        <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer" id="discordBtn" class="button discord-button" onclick="recordLinkClick('discord')">Join Discord</a>
+      </div>
+
+      <div style="position: relative; display: inline-block; margin-bottom: 2rem;">
+        <div id="checkmark-youtube" class="checkmark" aria-hidden="true">✅</div>
+        <a href="https://youtube.com/your-channel" target="_blank" rel="noopener noreferrer" id="youtubeBtn" class="button youtube-button" onclick="recordLinkClick('youtube')">YouTube</a>
+      </div>
+
+      <div id="verifySection" class="flex flex-col items-center space-y-2 mt-6" style="user-select:none;">
+        <div id="checkmark-final" style="font-size: 2.8rem; color: #22c55e; text-shadow:
+          0 0 6px #22c55e,
+          0 0 10px #22c55e,
+          0 0 20px #22c55e,
+          0 0 30px #22c55e; display:none;" aria-hidden="true">✅</div>
+        <button id="verifyBtn" class="button script-button" disabled onclick="verifyUser()">Verify</button>
+        <p id="errorMsg" class="error"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Your daily key (you can update this dynamically)
+    const dailyKey = "FUJI-RARE-EXPERT-LITE";
+
+    // LocalStorage keys for tracking clicks
+    const STORAGE_DISCORD = 'clickedDiscord';
+    const STORAGE_YOUTUBE = 'clickedYoutube';
+
+    const keyDiv = document.getElementById('key');
+    const fakePathDiv = document.getElementById('fakePath');
+    const modal = document.getElementById('verificationModal');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const checkDiscord = document.getElementById('checkmark-discord');
+    const checkYoutube = document.getElementById('checkmark-youtube');
+    const checkFinal = document.getElementById('checkmark-final');
+
+    // On page load, show key if already verified
+    window.onload = () => {
+      if (localStorage.getItem('verified') === 'true') {
+        showKey();
+      }
+    };
+
+    function showVerificationModal() {
+      // Reset modal states
+      errorMsg.textContent = '';
+      verifyBtn.disabled = true;
+      checkFinal.style.display = 'none';
+
+      // Check stored clicks
+      updateCheckmarks();
+
+      modal.style.display = 'flex';
+      document.body.classList.add('blurred');
+      verifyBtn.focus();
+    }
+
+    function updateCheckmarks() {
+      const discordClicked = localStorage.getItem(STORAGE_DISCORD) === 'true';
+      const youtubeClicked = localStorage.getItem(STORAGE_YOUTUBE) === 'true';
+
+      checkDiscord.style.display = discordClicked ? 'block' : 'none';
+      checkYoutube.style.display = youtubeClicked ? 'block' : 'none';
+
+      verifyBtn.disabled = !(discordClicked && youtubeClicked);
+    }
+
+    function recordLinkClick(platform) {
+      if (platform === 'discord') {
+        localStorage.setItem(STORAGE_DISCORD, 'true');
+      } else if (platform === 'youtube') {
+        localStorage.setItem(STORAGE_YOUTUBE, 'true');
+      }
+      updateCheckmarks();
+    }
+
+    function verifyUser() {
+      errorMsg.textContent = '';
+      const discordClicked = localStorage.getItem(STORAGE_DISCORD) === 'true';
+      const youtubeClicked = localStorage.getItem(STORAGE_YOUTUBE) === 'true';
+
+      if (!discordClicked || !youtubeClicked) {
+        errorMsg.textContent = 'Please click both links before verifying.';
+        return;
+      }
+
+      // Verification success
+      localStorage.setItem('verified', 'true');
+      checkFinal.style.display = 'block';
+
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.classList.remove('blurred');
+        showKey();
+      }, 1000);
+    }
+
+    function showKey() {
+      keyDiv.textContent = dailyKey;
+      keyDiv.style.display = 'inline-block';
+      fakePathDiv.textContent = "C:\\Users\\User\\Desktop\\Faygoware-Key.exe";
+      fakePathDiv.style.color = '#555';
+      fakePathDiv.style.userSelect = 'text';
+
+      // Append a copy button below key
+      if (!document.querySelector('.key-copy-btn')) {
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Copy Key';
+        copyBtn.className = 'key-copy-btn';
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(dailyKey);
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy Key', 1500);
+        };
+        keyDiv.parentNode.appendChild(copyBtn);
+      }
+    }
+
+    // Accessibility: close modal on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        modal.style.display = 'none';
+        document.body.classList.remove('blurred');
+      }
+    });
+  </script>
+</body>
+</html>
