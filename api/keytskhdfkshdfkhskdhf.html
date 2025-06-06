@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: linear-gradient(to top, #000, #181818);
+      background: #0a0a0a; /* Much darker background */
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -22,17 +22,18 @@
     .container {
       text-align: center;
       padding: 3rem;
-      background: linear-gradient(to top, #000, #181818);
-      border: 1px solid white;
+      background: #121212; /* Dark container */
+      border: 1px solid #222; /* subtle border */
       border-radius: 1rem;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
       transition: box-shadow 0.3s ease;
       width: 90%;
       max-width: 600px;
+      color: #eee;
     }
 
     .container:hover {
-      box-shadow: 0 0 25px rgba(0, 153, 255, 0.8);
+      box-shadow: 0 0 30px rgba(0, 153, 255, 0.6);
     }
 
     #key {
@@ -40,22 +41,23 @@
       margin: 2rem 0;
       padding: 2rem;
       font-size: 1.5rem;
-      background: #111;
-      border: 1px solid white;
+      background: #1b1b1b;
+      border: 1px solid #333;
       border-radius: 0.75rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      box-shadow: 0 0 10px rgba(0,0,0,0.8);
       font-family: monospace;
       user-select: all;
+      display: none; /* hide initially */
     }
 
     .button {
       position: relative;
-      border: 1px solid white;
-      background: linear-gradient(to top, #000, #181818);
+      border: 1px solid #444;
+      background: #181818;
       border-radius: 0.5rem;
-      padding: 0.75rem 1.5rem;
+      padding: 0.75rem 2.5rem; /* increased horizontal padding for uniform width */
       font-weight: bold;
-      color: white;
+      color: #ccc;
       cursor: pointer;
       transition: 0.3s ease;
       display: inline-flex;
@@ -65,13 +67,16 @@
       font-size: 1rem;
       user-select: none;
       overflow: visible; /* needed for overlay checkmark */
+      width: 180px; /* fixed width for uniformity */
+      box-sizing: border-box;
     }
 
     .button:hover:not(.blurred) {
       transform: translateY(-3px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 20px rgba(0, 153, 255, 0.7);
       border-color: #22c55e;
-      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+      filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.8));
+      color: white;
     }
 
     .button:active:not(.blurred) {
@@ -92,7 +97,7 @@
 
     #fakePath {
       font-size: 0.9rem;
-      color: #999;
+      color: #666;
       margin-top: 1rem;
       font-family: monospace;
     }
@@ -102,7 +107,7 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.9);
       align-items: center;
       justify-content: center;
       z-index: 1000;
@@ -110,14 +115,15 @@
     }
 
     .modal-content {
-      background: linear-gradient(to top, #000, #181818);
+      background: #121212;
       padding: 2rem;
       border-radius: 1rem;
-      border: 1px solid white;
+      border: 1px solid #333;
       text-align: center;
       width: 90%;
       max-width: 450px;
       user-select: none;
+      color: #ddd;
     }
 
     .error {
@@ -149,7 +155,6 @@
       z-index: 10;
     }
 
-    /* Center checkmark above button */
     .checkmark-center {
       right: 50%;
       transform: translateX(50%);
@@ -158,14 +163,35 @@
       background: rgba(34, 197, 94, 0.15);
       border-radius: 50%;
       padding: 2px 8px;
-      filter:
-        drop-shadow(0 0 8px #22c55e);
+      filter: drop-shadow(0 0 8px #22c55e);
     }
 
     .key-copy-btn {
       margin-top: 1rem;
-      font-size: 0.9rem;
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 2.5rem; /* match get key button padding */
+      width: 180px; /* match get key button width */
+      font-size: 1rem;
+      font-weight: bold;
+      background: #181818;
+      border: 1px solid #444;
+      border-radius: 0.5rem;
+      color: #ccc;
+      cursor: pointer;
+      transition: 0.3s ease;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .key-copy-btn:hover {
+      color: white;
+      border-color: #22c55e;
+      filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.8));
+      transform: translateY(-3px);
+    }
+    .key-copy-btn:active {
+      transform: scale(0.95);
     }
   </style>
 </head>
@@ -173,8 +199,8 @@
   <h1 class="animated-gradient-title" id="dynamicTitle">Faygoware Key</h1>
 
   <div class="container">
-    <p class="text-white text-lg mb-4">This key is the same for everyone and updates daily.</p>
-    <div id="key" style="display: none;"></div>
+    <p class="mb-4">This key is the same for everyone and updates daily. You must verify each time to get the key.</p>
+    <div id="key"></div>
     <button class="button" onclick="showVerificationModal()">Get Key</button>
     <div id="fakePath"></div>
   </div>
@@ -215,7 +241,6 @@
     let discordClicked = false;
     let youtubeClicked = false;
 
-    // Convert integer to Roman numerals
     function toRoman(num) {
       const romanMap = [
         { val: 1000, sym: "M" },
@@ -242,7 +267,6 @@
       return result;
     }
 
-    // Get EST date parts using Intl API (correctly handles DST)
     function getESTDate() {
       const estFormatter = new Intl.DateTimeFormat('en-US', {
         timeZone: 'America/New_York',
@@ -258,7 +282,6 @@
       return dateParts;
     }
 
-    // Generate the daily key using Roman numerals of EST date
     function generateDailyKey() {
       const dateParts = getESTDate();
       const year = parseInt(dateParts.year, 10);
@@ -274,14 +297,14 @@
       keyDisplay.style.display = 'block';
       keyDisplay.innerHTML = `
         <div class="text-xl font-mono">${newKey}</div>
-        <button class="button key-copy-btn" onclick="copyKey('${newKey}')">Copy Key</button>
+        <button class="key-copy-btn" onclick="copyKey('${newKey}')">Copy Key</button>
       `;
     }
 
     function copyKey(keyText) {
       const clickSound = document.getElementById("clickSound");
       clickSound.currentTime = 0;
-      clickSound.play().catch((e) => console.log("Audio playback failed:", e));
+      clickSound.play().catch(() => {});
 
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(keyText).catch(() => fallbackCopy(keyText));
@@ -306,9 +329,8 @@
 
     function updateTitle() {
       const titleElement = document.getElementById('dynamicTitle');
-      const key = generateDailyKey();
-      titleElement.textContent = key;
-      document.title = `🔑 ${key} | Daily Key`;
+      titleElement.textContent = 'Faygoware Key';
+      document.title = '🔑 Faygoware Key | Daily Key';
     }
 
     function generateFakePath() {
@@ -333,6 +355,7 @@
       youtubeClicked = false;
       resetVerificationUI();
       document.getElementById('verificationModal').style.display = 'flex';
+      document.getElementById('key').style.display = 'none'; // hide key until verified
     }
 
     function closeModal() {
@@ -393,11 +416,11 @@
       verifyBtn.classList.remove('blurred');
     }
 
-    // On page load
     window.onload = () => {
       updateTitle();
       generateFakePath();
-      updateKeyDisplay();
+      // Key hidden until verified, so don't show key on load.
+      document.getElementById('key').style.display = 'none';
     };
   </script>
 </body>
