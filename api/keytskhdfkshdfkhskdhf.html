@@ -49,6 +49,7 @@
     }
 
     .button {
+      position: relative;
       border: 1px solid white;
       background: linear-gradient(to top, #000, #181818);
       border-radius: 0.5rem;
@@ -63,6 +64,7 @@
       gap: 0.4rem;
       font-size: 1rem;
       user-select: none;
+      overflow: visible; /* needed for overlay checkmark */
     }
 
     .button:hover:not(.blurred) {
@@ -131,11 +133,33 @@
     }
 
     .checkmark {
-      font-size: 1.5rem;
+      position: absolute;
+      top: -12px;
+      right: 10px;
+      font-size: 1.8rem;
       color: #22c55e;
-      margin-bottom: 0.25rem;
-      display: none;
+      text-shadow:
+        0 0 6px #22c55e,
+        0 0 10px #22c55e,
+        0 0 20px #22c55e,
+        0 0 30px #22c55e;
+      pointer-events: none;
       user-select: none;
+      display: none;
+      z-index: 10;
+    }
+
+    /* Center checkmark above button */
+    .checkmark-center {
+      right: 50%;
+      transform: translateX(50%);
+      top: -28px;
+      font-size: 2.4rem;
+      background: rgba(34, 197, 94, 0.15);
+      border-radius: 50%;
+      padding: 2px 8px;
+      filter:
+        drop-shadow(0 0 8px #22c55e);
     }
 
     .key-copy-btn {
@@ -155,38 +179,39 @@
     <div id="fakePath"></div>
   </div>
 
-  <div id="verificationModal" class="modal">
-    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div id="verificationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
       <h2 class="text-xl mb-4" id="modalTitle">Verify to Access Key</h2>
       <p class="mb-4">Click both links below to join our Discord server and subscribe to our YouTube channel to unlock the key.</p>
 
-      <div class="mb-4">
-        <div id="checkmark-discord" class="checkmark" aria-hidden="true">✅</div>
+      <div class="mb-6" style="position: relative; display: inline-block;">
+        <div id="checkmark-discord" class="checkmark checkmark-center" aria-hidden="true">✅</div>
         <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer" id="discordBtn" class="button" onclick="recordLinkClick('discord')">Join Discord</a>
       </div>
 
-      <div class="mb-4">
-        <div id="checkmark-youtube" class="checkmark" aria-hidden="true">✅</div>
+      <div class="mb-6" style="position: relative; display: inline-block;">
+        <div id="checkmark-youtube" class="checkmark checkmark-center" aria-hidden="true">✅</div>
         <a href="https://youtube.com/your-channel" target="_blank" rel="noopener noreferrer" id="youtubeBtn" class="button" onclick="recordLinkClick('youtube')">YouTube</a>
       </div>
 
-      <div id="verifySection" class="flex flex-col items-center space-y-2">
-        <div id="checkmark-final" style="font-size: 2rem; display: none;" aria-hidden="true">✅</div>
-        <button id="verifyBtn" class="button" onclick="verifyUser()">Verify</button>
+      <div id="verifySection" class="flex flex-col items-center space-y-2 mt-6">
+        <div id="checkmark-final" style="font-size: 2.8rem; color: #22c55e; text-shadow:
+          0 0 10px #22c55e,
+          0 0 20px #22c55e,
+          0 0 30px #22c55e;" aria-hidden="true">✅</div>
+        <button id="verifyBtn" class="button mt-2" onclick="verifyUser()">Verify</button>
       </div>
 
       <div id="errorMessage" class="error" role="alert" aria-live="assertive"></div>
-      <button class="button mt-2" onclick="closeModal()">Cancel</button>
+      <button class="button mt-4" onclick="closeModal()">Cancel</button>
     </div>
   </div>
 
   <audio id="clickSound" src="./computer.mp3"></audio>
 
   <script>
-    // Disable right-click context menu
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // Track clicks only in memory now
     let discordClicked = false;
     let youtubeClicked = false;
 
@@ -263,7 +288,6 @@
     }
 
     function showVerificationModal() {
-      // reset clicks & UI
       discordClicked = false;
       youtubeClicked = false;
       resetVerificationUI();
@@ -279,7 +303,6 @@
       if (platform === 'discord') discordClicked = true;
       if (platform === 'youtube') youtubeClicked = true;
 
-      // Show checkmark above clicked button & blur it
       const checkmark = document.getElementById(`checkmark-${platform}`);
       const btn = document.getElementById(`${platform}Btn`);
       if (checkmark && btn) {
@@ -309,7 +332,6 @@
         setTimeout(() => {
           closeModal();
           updateKeyDisplay();
-          // Automatically copy the key after verification
           const keyText = document.querySelector('#key div').textContent;
           copyKey(keyText);
         }, 1000);
@@ -317,7 +339,6 @@
     }
 
     function resetVerificationUI() {
-      // Reset checkmarks and button styles on modal open
       ['discord', 'youtube'].forEach(platform => {
         const checkmark = document.getElementById(`checkmark-${platform}`);
         const btn = document.getElementById(`${platform}Btn`);
