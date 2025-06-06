@@ -1,279 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Daily Shared Key</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background: linear-gradient(to top, #000, #181818);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding-top: 2rem;
-            font-family: 'Gotham', Arial, sans-serif;
-            color: white;
-            user-select: none;
-        }
-        .container {
-            text-align: center;
-            padding: 2rem;
-            background: linear-gradient(to top, #000, #181818);
-            border: 1px solid white;
-            border-radius: 1rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            transition: box-shadow 0.3s ease;
-        }
-        .container:hover {
-            box-shadow: 0 0 20px rgba(0, 153, 255, 0.8);
-        }
-        #key {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 1.5rem 0;
-            padding: 0.75rem 1.5rem;
-            border: 1px solid white;
-            border-radius: 0.5rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        }
-        #key:hover {
-            box-shadow: 0 0 15px rgba(0, 153, 255, 0.8);
-        }
-        .button {
-            border: 1px solid white;
-            background: linear-gradient(to top, #000, #181818);
-            border-radius: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: 0.4s ease-in-out;
-        }
-        .button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            border-color: #22c55e;
-            filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
-        }
-        .button:active {
-            transform: scale(0.95);
-        }
-        .animated-gradient-title {
-            font-size: 2.25rem;
-            font-weight: 700;
-            background: linear-gradient(to top, #bbb, #fff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 6px rgba(0, 153, 255, 0.8);
-        }
-        .animated-gradient-title:hover {
-            transform: scale(1.1);
-            text-shadow: 0 0 12px rgba(0, 153, 255, 1);
-        }
-        #fakePath {
-            font-size: 0.9rem;
-            color: #999;
-            margin-top: 1rem;
-            font-family: monospace;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: linear-gradient(to top, #000, #181818);
-            padding: 2rem;
-            border-radius: 1rem;
-            border: 1px solid white;
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-        }
-        .error {
-            color: #ff4444;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Shared Key</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to top, #000, #181818);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding-top: 2rem;
+      font-family: 'Gotham', Arial, sans-serif;
+      color: white;
+      user-select: none;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(to top, #000, #181818);
+      border: 1px solid white;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      transition: box-shadow 0.3s ease;
+    }
+    .container:hover {
+      box-shadow: 0 0 20px rgba(0, 153, 255, 0.8);
+    }
+    #key {
+      font-weight: bold;
+      margin: 1.5rem 0;
+      padding: 1rem;
+      border: 1px solid white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .button {
+      border: 1px solid white;
+      background: linear-gradient(to top, #000, #181818);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: 0.4s ease-in-out;
+    }
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      border-color: #22c55e;
+      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+    }
+    .button:active {
+      transform: scale(0.95);
+    }
+    .animated-gradient-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      background: linear-gradient(to top, #bbb, #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 6px rgba(0, 153, 255, 0.8);
+    }
+    #fakePath {
+      font-size: 0.9rem;
+      color: #999;
+      margin-top: 1rem;
+      font-family: monospace;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: linear-gradient(to top, #000, #181818);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid white;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    .error {
+      color: #ff4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+  </style>
 </head>
 <body>
-    <h1 class="animated-gradient-title" id="dynamicTitle">Faygoware Key</h1>
-    <div class="container">
-        <p class="text-white text-lg mb-4">This key is the same for everyone and updates daily.</p>
-        <div id="key" style="display: none;">Generating...</div>
-        <button class="button" onclick="showVerificationModal()">Get Key</button>
-        <div id="fakePath"></div>
+  <h1 class="animated-gradient-title" id="dynamicTitle">Faygoware Key</h1>
+  <div class="container">
+    <p class="text-white text-lg mb-4">This key is the same for everyone and updates daily.</p>
+    <div id="key" style="display: none;"></div>
+    <button class="button" onclick="showVerificationModal()">Get Key</button>
+    <div id="fakePath"></div>
+  </div>
+
+  <div id="verificationModal" class="modal">
+    <div class="modal-content">
+      <h2 class="text-xl mb-4">Verify to Access Key</h2>
+      <p class="mb-4">Click both links below to join our Discord server and subscribe to our YouTube channel to unlock the key.</p>
+      <a href="https://discord.gg/your-discord-invite" target="_blank" class="button mb-4" onclick="recordLinkClick('discord')">Join Discord</a>
+      <a href="https://youtube.com/your-channel" target="_blank" class="button mb-4" onclick="recordLinkClick('youtube')">YouTube</a>
+
+      <div id="verifySection" class="flex flex-col items-center space-y-2">
+        <div id="checkmark" style="font-size: 2rem; display: none;">✅</div>
+        <button id="verifyBtn" class="button" onclick="verifyUser()">Verify</button>
+      </div>
+
+      <div id="errorMessage" class="error"></div>
+      <button class="button mt-2" onclick="closeModal()">Cancel</button>
     </div>
+  </div>
 
-    <div id="verificationModal" class="modal">
-        <div class="modal-content">
-            <h2 class="text-xl mb-4">Verify to Access Key</h2>
-            <p class="mb-4">Click both links below to join our Discord server and subscribe to our YouTube channel to unlock the key.</p>
-            <a href="https://discord.gg/your-discord-invite" target="_blank" class="button mb-4" onclick="recordLinkClick('discord')">Join Discord</a>
-            <a href="https://youtube.com/your-channel" target="_blank" class="button mb-4" onclick="recordLinkClick('youtube')">YouTube</a>
-            
-            <div id="verifySection" class="flex flex-col items-center space-y-2">
-                <div id="checkmark" style="font-size: 2rem; display: none;">✅</div>
-                <button id="verifyBtn" class="button" onclick="verifyUser()">Verify</button>
-            </div>
+  <audio id="clickSound" src="./computer.mp3"></audio>
 
-            <div id="errorMessage" class="error"></div>
-            <button class="button mt-2" onclick="closeModal()">Cancel</button>
-        </div>
-    </div>
-
-    <audio id="clickSound" src="./computer.mp3"></audio>
-
-<script>
+  <script>
     document.addEventListener('contextmenu', event => event.preventDefault());
 
     function generateRandomKey(length = 12) {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        return 'Faygoware_' + Array.from({ length }, () =>
-            characters[Math.floor(Math.random() * characters.length)]
-        ).join('');
-    }
-
-    function saveKey(key) {
-        let keys = JSON.parse(localStorage.getItem('allKeys') || '[]');
-        keys.push(key);
-        localStorage.setItem('allKeys', JSON.stringify(keys));
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      return 'Faygoware_' + Array.from({ length }, () =>
+        characters[Math.floor(Math.random() * characters.length)]
+      ).join('');
     }
 
     function updateKeyDisplay() {
-        const keyDisplay = document.getElementById('key');
-        let currentKey = localStorage.getItem('currentKey');
-        if (!currentKey) {
-            currentKey = generateRandomKey(12);
-            localStorage.setItem('currentKey', currentKey);
-            saveKey(currentKey);
-        }
-        keyDisplay.textContent = currentKey;
-        keyDisplay.style.display = 'block';
-        keyDisplay.innerHTML = `${currentKey} <button class="button ml-4" onclick="copyKey()">Copy Key</button>`;
+      const keyDisplay = document.getElementById('key');
+      const newKey = generateRandomKey(12);
+      keyDisplay.style.display = 'block';
+      keyDisplay.innerHTML = `
+        <div class="text-lg font-mono">${newKey}</div>
+        <button class="button mt-2 text-sm py-1 px-2" onclick="copyKey('${newKey}')">Copy Key</button>
+      `;
     }
 
-    function copyKey() {
-        const keyText = document.getElementById('key').textContent.split(' ')[0];
-        const clickSound = document.getElementById("clickSound");
-        clickSound.currentTime = 0;
-        clickSound.play().catch((e) => console.log("Audio playback failed:", e));
+    function copyKey(keyText) {
+      const clickSound = document.getElementById("clickSound");
+      clickSound.currentTime = 0;
+      clickSound.play().catch((e) => console.log("Audio playback failed:", e));
 
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(keyText).catch(() => fallbackCopy(keyText));
-        } else {
-            fallbackCopy(keyText);
-        }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(keyText).catch(() => fallbackCopy(keyText));
+      } else {
+        fallbackCopy(keyText);
+      }
     }
 
     function fallbackCopy(text) {
-        try {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.focus();
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-        } catch {}
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } catch {}
     }
 
     function updateTitle() {
-        const titleElement = document.getElementById('dynamicTitle');
-        const randomTitle = generateRandomString(12);
-        titleElement.textContent = randomTitle;
-        document.title = `🔑 ${randomTitle} | Daily Key`;
+      const titleElement = document.getElementById('dynamicTitle');
+      const randomTitle = generateRandomString(12);
+      titleElement.textContent = randomTitle;
+      document.title = `🔑 ${randomTitle} | Daily Key`;
     }
 
     function generateRandomString(length) {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
     }
 
     function generateFakePath() {
-        const folders = ['system', 'usr', 'bin', 'etc', 'var', 'tmp', 'home', 'data', 'logs', 'config'];
-        const files = ['keygen', 'secure', 'auth', 'crypto', 'access', 'token', 'session'];
-        const extensions = ['.dat', '.key', '.conf', '.log', '.txt'];
-        const pathLength = Math.floor(Math.random() * 3) + 2;
-        let path = '/';
-        for (let i = 0; i < pathLength; i++) {
-            path += folders[Math.floor(Math.random() * folders.length)] + '/';
-        }
-        const fileName = files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
-        path += fileName;
+      const folders = ['system', 'usr', 'bin', 'etc', 'var', 'tmp', 'home', 'data', 'logs', 'config'];
+      const files = ['keygen', 'secure', 'auth', 'crypto', 'access', 'token', 'session'];
+      const extensions = ['.dat', '.key', '.conf', '.log', '.txt'];
+      const pathLength = Math.floor(Math.random() * 3) + 2;
+      let path = '/';
+      for (let i = 0; i < pathLength; i++) {
+        path += folders[Math.floor(Math.random() * folders.length)] + '/';
+      }
+      const fileName = files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
+      path += fileName;
 
-        document.getElementById('fakePath').textContent = `Path: ${path}`;
-        history.replaceState(null, '', path);
-        document.title = `🔐 ${fileName} | Daily Key`;
+      document.getElementById('fakePath').textContent = `Path: ${path}`;
+      history.replaceState(null, '', path);
+      document.title = `🔐 ${fileName} | Daily Key`;
     }
 
     function showVerificationModal() {
-        const isVerified = localStorage.getItem('isVerified');
-        if (isVerified === 'true') {
-            updateKeyDisplay();
-        } else {
-            document.getElementById('verificationModal').style.display = 'flex';
-        }
+      document.getElementById('verificationModal').style.display = 'flex';
     }
 
     function closeModal() {
-        document.getElementById('verificationModal').style.display = 'none';
-        document.getElementById('errorMessage').textContent = '';
+      document.getElementById('verificationModal').style.display = 'none';
+      document.getElementById('errorMessage').textContent = '';
     }
 
     function recordLinkClick(platform) {
-        localStorage.setItem(`${platform}Clicked`, 'true');
+      localStorage.setItem(`${platform}Clicked`, 'true');
     }
 
     function verifyUser() {
-        const discordClicked = localStorage.getItem('discordClicked');
-        const youtubeClicked = localStorage.getItem('youtubeClicked');
-        const errorMessage = document.getElementById('errorMessage');
-        const verifyBtn = document.getElementById('verifyBtn');
-        const checkmark = document.getElementById('checkmark');
+      const discordClicked = localStorage.getItem('discordClicked');
+      const youtubeClicked = localStorage.getItem('youtubeClicked');
+      const errorMessage = document.getElementById('errorMessage');
+      const verifyBtn = document.getElementById('verifyBtn');
+      const checkmark = document.getElementById('checkmark');
 
-        if (discordClicked !== 'true' || youtubeClicked !== 'true') {
-            errorMessage.textContent = 'Please click both the Discord and YouTube links to verify.';
-            return;
-        }
+      if (discordClicked !== 'true' || youtubeClicked !== 'true') {
+        errorMessage.textContent = 'Please click both the Discord and YouTube links to verify.';
+        return;
+      }
 
-        errorMessage.textContent = 'Verifying... Please wait 10 seconds.';
-        verifyBtn.disabled = true;
-        verifyBtn.style.filter = 'blur(2px)';
-        verifyBtn.style.opacity = '0.6';
-        verifyBtn.style.pointerEvents = 'none';
+      errorMessage.textContent = 'Verifying... Please wait 10 seconds.';
+      verifyBtn.disabled = true;
+      verifyBtn.style.filter = 'blur(2px)';
+      verifyBtn.style.opacity = '0.6';
+      verifyBtn.style.pointerEvents = 'none';
 
+      setTimeout(() => {
+        checkmark.style.display = 'block';
+        errorMessage.textContent = 'Verified!';
         setTimeout(() => {
-            checkmark.style.display = 'block';
-            errorMessage.textContent = 'Verified!';
-            localStorage.setItem('isVerified', 'true');
-
-            setTimeout(() => {
-                closeModal();
-                updateKeyDisplay();
-                copyKey();
-            }, 1000);
-        }, 10000);
+          closeModal();
+          updateKeyDisplay();
+          copyKey(document.querySelector('#key div').textContent);
+        }, 1000);
+      }, 10000);
     }
 
     generateFakePath();
     setInterval(updateTitle, 200);
     setInterval(generateFakePath, 200);
-</script>
+  </script>
 </body>
 </html>
