@@ -215,16 +215,62 @@
     let discordClicked = false;
     let youtubeClicked = false;
 
-    function generateRandomKey(length = 12) {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      return 'Faygoware_' + Array.from({ length }, () =>
-        characters[Math.floor(Math.random() * characters.length)]
-      ).join('');
+    // Convert integer to Roman numerals
+    function toRoman(num) {
+      const romanMap = [
+        { val: 1000, sym: "M" },
+        { val: 900, sym: "CM" },
+        { val: 500, sym: "D" },
+        { val: 400, sym: "CD" },
+        { val: 100, sym: "C" },
+        { val: 90, sym: "XC" },
+        { val: 50, sym: "L" },
+        { val: 40, sym: "XL" },
+        { val: 10, sym: "X" },
+        { val: 9, sym: "IX" },
+        { val: 5, sym: "V" },
+        { val: 4, sym: "IV" },
+        { val: 1, sym: "I" },
+      ];
+      let result = "";
+      for (const { val, sym } of romanMap) {
+        while (num >= val) {
+          result += sym;
+          num -= val;
+        }
+      }
+      return result;
+    }
+
+    // Get EST date parts using Intl API (correctly handles DST)
+    function getESTDate() {
+      const estFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+      });
+      const parts = estFormatter.formatToParts(new Date());
+      const dateParts = {};
+      parts.forEach(({ type, value }) => {
+        if(type !== 'literal') dateParts[type] = value;
+      });
+      return dateParts;
+    }
+
+    // Generate the daily key using Roman numerals of EST date
+    function generateDailyKey() {
+      const dateParts = getESTDate();
+      const year = parseInt(dateParts.year, 10);
+      const month = parseInt(dateParts.month, 10);
+      const day = parseInt(dateParts.day, 10);
+
+      return `FAYGO_${toRoman(year)}_${toRoman(month)}_${toRoman(day)}`;
     }
 
     function updateKeyDisplay() {
       const keyDisplay = document.getElementById('key');
-      const newKey = generateRandomKey(12);
+      const newKey = generateDailyKey();
       keyDisplay.style.display = 'block';
       keyDisplay.innerHTML = `
         <div class="text-xl font-mono">${newKey}</div>
@@ -260,14 +306,9 @@
 
     function updateTitle() {
       const titleElement = document.getElementById('dynamicTitle');
-      const randomTitle = generateRandomString(12);
-      titleElement.textContent = randomTitle;
-      document.title = `🔑 ${randomTitle} | Daily Key`;
-    }
-
-    function generateRandomString(length) {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+      const key = generateDailyKey();
+      titleElement.textContent = key;
+      document.title = `🔑 ${key} | Daily Key`;
     }
 
     function generateFakePath() {
@@ -326,39 +367,38 @@
       verifyBtn.classList.add('blurred');
 
       setTimeout(() => {
+        errorMessage.textContent = '';
         finalCheckmark.style.display = 'block';
-        errorMessage.textContent = 'Verified!';
-
-        setTimeout(() => {
-          closeModal();
-          updateKeyDisplay();
-          const keyText = document.querySelector('#key div').textContent;
-          copyKey(keyText);
-        }, 1000);
+        updateKeyDisplay();
+        closeModal();
       }, 10000);
     }
 
     function resetVerificationUI() {
-      ['discord', 'youtube'].forEach(platform => {
-        const checkmark = document.getElementById(`checkmark-${platform}`);
-        const btn = document.getElementById(`${platform}Btn`);
-        if (checkmark) checkmark.style.display = 'none';
-        if (btn) btn.classList.remove('blurred');
-      });
+      discordClicked = false;
+      youtubeClicked = false;
+
+      document.getElementById('checkmark-discord').style.display = 'none';
+      document.getElementById('checkmark-youtube').style.display = 'none';
+      document.getElementById('checkmark-final').style.display = 'none';
+
+      document.getElementById('discordBtn').classList.remove('blurred');
+      document.getElementById('youtubeBtn').classList.remove('blurred');
+
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.textContent = '';
 
       const verifyBtn = document.getElementById('verifyBtn');
-      const finalCheckmark = document.getElementById('checkmark-final');
       verifyBtn.disabled = false;
       verifyBtn.classList.remove('blurred');
-      finalCheckmark.style.display = 'none';
-
-      document.getElementById('errorMessage').textContent = '';
     }
 
-    // Initial setup
-    generateFakePath();
-    setInterval(updateTitle, 200);
-    setInterval(generateFakePath, 200);
+    // On page load
+    window.onload = () => {
+      updateTitle();
+      generateFakePath();
+      updateKeyDisplay();
+    };
   </script>
 </body>
 </html>
