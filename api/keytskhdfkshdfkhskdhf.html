@@ -186,6 +186,10 @@
     // Disable right-click context menu
     document.addEventListener('contextmenu', event => event.preventDefault());
 
+    // Track clicks only in memory now
+    let discordClicked = false;
+    let youtubeClicked = false;
+
     function generateRandomKey(length = 12) {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       return 'Faygoware_' + Array.from({ length }, () =>
@@ -259,13 +263,11 @@
     }
 
     function showVerificationModal() {
-      const isVerified = localStorage.getItem('isVerified');
-      if (isVerified === 'true') {
-        updateKeyDisplay();
-      } else {
-        resetVerificationUI();
-        document.getElementById('verificationModal').style.display = 'flex';
-      }
+      // reset clicks & UI
+      discordClicked = false;
+      youtubeClicked = false;
+      resetVerificationUI();
+      document.getElementById('verificationModal').style.display = 'flex';
     }
 
     function closeModal() {
@@ -274,7 +276,9 @@
     }
 
     function recordLinkClick(platform) {
-      localStorage.setItem(`${platform}Clicked`, 'true');
+      if (platform === 'discord') discordClicked = true;
+      if (platform === 'youtube') youtubeClicked = true;
+
       // Show checkmark above clicked button & blur it
       const checkmark = document.getElementById(`checkmark-${platform}`);
       const btn = document.getElementById(`${platform}Btn`);
@@ -285,13 +289,11 @@
     }
 
     function verifyUser() {
-      const discordClicked = localStorage.getItem('discordClicked');
-      const youtubeClicked = localStorage.getItem('youtubeClicked');
       const errorMessage = document.getElementById('errorMessage');
       const verifyBtn = document.getElementById('verifyBtn');
       const finalCheckmark = document.getElementById('checkmark-final');
 
-      if (discordClicked !== 'true' || youtubeClicked !== 'true') {
+      if (!discordClicked || !youtubeClicked) {
         errorMessage.textContent = 'Please click both the Discord and YouTube links to verify.';
         return;
       }
@@ -310,8 +312,6 @@
           // Automatically copy the key after verification
           const keyText = document.querySelector('#key div').textContent;
           copyKey(keyText);
-          // Mark verified in localStorage
-          localStorage.setItem('isVerified', 'true');
         }, 1000);
       }, 10000);
     }
@@ -319,7 +319,6 @@
     function resetVerificationUI() {
       // Reset checkmarks and button styles on modal open
       ['discord', 'youtube'].forEach(platform => {
-        localStorage.removeItem(`${platform}Clicked`);
         const checkmark = document.getElementById(`checkmark-${platform}`);
         const btn = document.getElementById(`${platform}Btn`);
         if (checkmark) checkmark.style.display = 'none';
