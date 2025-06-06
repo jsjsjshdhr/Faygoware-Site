@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: #0a0a0a; /* Much darker background */
+      background: linear-gradient(to top, #000, #181818);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -22,18 +22,13 @@
     .container {
       text-align: center;
       padding: 3rem;
-      background: #121212; /* Dark container */
-      border: 1px solid #222; /* subtle border */
+      background: #121212;
+      border: 1px solid #222;
       border-radius: 1rem;
       box-shadow: 0 0 15px rgba(0,0,0,0.7);
-      transition: box-shadow 0.3s ease;
       width: 90%;
       max-width: 600px;
       color: #eee;
-    }
-
-    .container:hover {
-      box-shadow: 0 0 30px rgba(0, 153, 255, 0.6);
     }
 
     #key {
@@ -47,40 +42,39 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.8);
       font-family: monospace;
       user-select: all;
-      display: none; /* hide initially */
+      display: none;
     }
 
-    .button {
-      position: relative;
-      border: 1px solid #444;
-      background: #181818;
+    .button, .key-copy-btn {
+      border: 1px solid white;
+      background: linear-gradient(to top, #000, #181818);
       border-radius: 0.5rem;
-      padding: 0.75rem 2.5rem; /* increased horizontal padding for uniform width */
+      padding: 0.75rem 2.5rem;
       font-weight: bold;
       color: #ccc;
       cursor: pointer;
-      transition: 0.3s ease;
+      transition: transform 0.4s ease-in-out;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
       font-size: 1rem;
-      user-select: none;
-      overflow: visible; /* needed for overlay checkmark */
-      width: 180px; /* fixed width for uniformity */
-      box-sizing: border-box;
+      width: 180px;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
     }
 
-    .button:hover:not(.blurred) {
+    .button:hover:not(.blurred), .key-copy-btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 153, 255, 0.7);
-      border-color: #22c55e;
-      filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.8));
       color: white;
     }
 
-    .button:active:not(.blurred) {
-      transform: scale(0.95);
+    .middle-button {
+      transform: scale(1.1);
+    }
+
+    .middle-button:hover:not(.blurred) {
+      transform: scale(1.15) translateY(-3px);
     }
 
     .animated-gradient-title {
@@ -90,9 +84,16 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 2rem;
+      color: transparent;
       text-shadow: 0 0 6px rgba(0, 153, 255, 0.8);
       user-select: none;
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .animated-gradient-title:hover {
+      transform: scale(1.1);
+      text-shadow: 0 0 12px rgba(0, 153, 255, 1);
     }
 
     #fakePath {
@@ -100,6 +101,32 @@
       color: #666;
       margin-top: 1rem;
       font-family: monospace;
+    }
+
+    .gradient-outline::before {
+      content: '';
+      position: absolute;
+      top: -3px; left: -3px; right: -3px; bottom: -3px;
+      background: linear-gradient(45deg, #22c55e, #3b82f6, #22c55e);
+      border-radius: 0.5rem;
+      z-index: -1;
+      filter: blur(6px);
+      animation: rotateBorder 4s linear infinite;
+      background-size: 400% 400%;
+    }
+
+    .gradient-outline:hover::before {
+      animation-duration: 1.2s;
+    }
+
+    .gradient-outline {
+      position: relative;
+      z-index: 0;
+    }
+
+    @keyframes rotateBorder {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .modal {
@@ -111,7 +138,6 @@
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      user-select: none;
     }
 
     .modal-content {
@@ -122,7 +148,6 @@
       text-align: center;
       width: 90%;
       max-width: 450px;
-      user-select: none;
       color: #ddd;
     }
 
@@ -132,27 +157,14 @@
       margin-top: 0.5rem;
     }
 
-    .blurred {
-      filter: blur(1.5px);
-      pointer-events: none;
-      opacity: 0.5;
-    }
-
     .checkmark {
       position: absolute;
       top: -12px;
       right: 10px;
       font-size: 1.8rem;
       color: #22c55e;
-      text-shadow:
-        0 0 6px #22c55e,
-        0 0 10px #22c55e,
-        0 0 20px #22c55e,
-        0 0 30px #22c55e;
-      pointer-events: none;
-      user-select: none;
+      text-shadow: 0 0 10px #22c55e;
       display: none;
-      z-index: 10;
     }
 
     .checkmark-center {
@@ -166,32 +178,10 @@
       filter: drop-shadow(0 0 8px #22c55e);
     }
 
-    .key-copy-btn {
-      margin-top: 1rem;
-      padding: 0.75rem 2.5rem; /* match get key button padding */
-      width: 180px; /* match get key button width */
-      font-size: 1rem;
-      font-weight: bold;
-      background: #181818;
-      border: 1px solid #444;
-      border-radius: 0.5rem;
-      color: #ccc;
-      cursor: pointer;
-      transition: 0.3s ease;
-      user-select: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .key-copy-btn:hover {
-      color: white;
-      border-color: #22c55e;
-      filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.8));
-      transform: translateY(-3px);
-    }
-    .key-copy-btn:active {
-      transform: scale(0.95);
+    .blurred {
+      filter: blur(1.5px);
+      pointer-events: none;
+      opacity: 0.5;
     }
   </style>
 </head>
@@ -201,34 +191,31 @@
   <div class="container">
     <p class="mb-4">This key is the same for everyone and updates daily. You must verify each time to get the key.</p>
     <div id="key"></div>
-    <button class="button" onclick="showVerificationModal()">Get Key</button>
+    <button class="button middle-button gradient-outline" onclick="showVerificationModal()">Get Key</button>
     <div id="fakePath"></div>
   </div>
 
-  <div id="verificationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div id="verificationModal" class="modal">
     <div class="modal-content">
-      <h2 class="text-xl mb-4" id="modalTitle">Verify to Access Key</h2>
+      <h2 class="text-xl mb-4">Verify to Access Key</h2>
       <p class="mb-4">Click both links below to join our Discord server and subscribe to our YouTube channel to unlock the key.</p>
 
-      <div class="mb-6" style="position: relative; display: inline-block;">
-        <div id="checkmark-discord" class="checkmark checkmark-center" aria-hidden="true">✅</div>
-        <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer" id="discordBtn" class="button" onclick="recordLinkClick('discord')">Join Discord</a>
+      <div class="mb-6" style="position: relative;">
+        <div id="checkmark-discord" class="checkmark checkmark-center">✅</div>
+        <a href="https://discord.gg/your-discord-invite" target="_blank" id="discordBtn" class="button gradient-outline" onclick="recordLinkClick('discord')">Join Discord</a>
       </div>
 
-      <div class="mb-6" style="position: relative; display: inline-block;">
-        <div id="checkmark-youtube" class="checkmark checkmark-center" aria-hidden="true">✅</div>
-        <a href="https://youtube.com/your-channel" target="_blank" rel="noopener noreferrer" id="youtubeBtn" class="button" onclick="recordLinkClick('youtube')">YouTube</a>
+      <div class="mb-6" style="position: relative;">
+        <div id="checkmark-youtube" class="checkmark checkmark-center">✅</div>
+        <a href="https://youtube.com/your-channel" target="_blank" id="youtubeBtn" class="button gradient-outline" onclick="recordLinkClick('youtube')">YouTube</a>
       </div>
 
       <div id="verifySection" class="flex flex-col items-center space-y-2 mt-6">
-        <div id="checkmark-final" style="font-size: 2.8rem; color: #22c55e; text-shadow:
-          0 0 10px #22c55e,
-          0 0 20px #22c55e,
-          0 0 30px #22c55e;" aria-hidden="true">✅</div>
-        <button id="verifyBtn" class="button mt-2" onclick="verifyUser()">Verify</button>
+        <div id="checkmark-final" style="font-size: 2.8rem; color: #22c55e; display: none;">✅</div>
+        <button id="verifyBtn" class="button middle-button gradient-outline" onclick="verifyUser()">Verify</button>
       </div>
 
-      <div id="errorMessage" class="error" role="alert" aria-live="assertive"></div>
+      <div id="errorMessage" class="error"></div>
       <button class="button mt-4" onclick="closeModal()">Cancel</button>
     </div>
   </div>
@@ -243,18 +230,12 @@
 
     function toRoman(num) {
       const romanMap = [
-        { val: 1000, sym: "M" },
-        { val: 900, sym: "CM" },
-        { val: 500, sym: "D" },
-        { val: 400, sym: "CD" },
-        { val: 100, sym: "C" },
-        { val: 90, sym: "XC" },
-        { val: 50, sym: "L" },
-        { val: 40, sym: "XL" },
-        { val: 10, sym: "X" },
-        { val: 9, sym: "IX" },
-        { val: 5, sym: "V" },
-        { val: 4, sym: "IV" },
+        { val: 1000, sym: "M" }, { val: 900, sym: "CM" },
+        { val: 500, sym: "D" }, { val: 400, sym: "CD" },
+        { val: 100, sym: "C" }, { val: 90, sym: "XC" },
+        { val: 50, sym: "L" }, { val: 40, sym: "XL" },
+        { val: 10, sym: "X" }, { val: 9, sym: "IX" },
+        { val: 5, sym: "V" }, { val: 4, sym: "IV" },
         { val: 1, sym: "I" },
       ];
       let result = "";
@@ -270,14 +251,12 @@
     function getESTDate() {
       const estFormatter = new Intl.DateTimeFormat('en-US', {
         timeZone: 'America/New_York',
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric'
+        year: 'numeric', month: 'numeric', day: 'numeric'
       });
       const parts = estFormatter.formatToParts(new Date());
       const dateParts = {};
       parts.forEach(({ type, value }) => {
-        if(type !== 'literal') dateParts[type] = value;
+        if (type !== 'literal') dateParts[type] = value;
       });
       return dateParts;
     }
@@ -287,7 +266,6 @@
       const year = parseInt(dateParts.year, 10);
       const month = parseInt(dateParts.month, 10);
       const day = parseInt(dateParts.day, 10);
-
       return `FAYGO_${toRoman(year)}_${toRoman(month)}_${toRoman(day)}`;
     }
 
@@ -297,7 +275,7 @@
       keyDisplay.style.display = 'block';
       keyDisplay.innerHTML = `
         <div class="text-xl font-mono">${newKey}</div>
-        <button class="key-copy-btn" onclick="copyKey('${newKey}')">Copy Key</button>
+        <button class="key-copy-btn gradient-outline" onclick="copyKey('${newKey}')">Copy Key</button>
       `;
     }
 
@@ -305,7 +283,6 @@
       const clickSound = document.getElementById("clickSound");
       clickSound.currentTime = 0;
       clickSound.play().catch(() => {});
-
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(keyText).catch(() => fallbackCopy(keyText));
       } else {
@@ -314,23 +291,19 @@
     }
 
     function fallbackCopy(text) {
-      try {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-      } catch {}
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
     }
 
     function updateTitle() {
-      const titleElement = document.getElementById('dynamicTitle');
-      titleElement.textContent = 'Faygoware Key';
-      document.title = '🔑 Faygoware Key | Daily Key';
+      document.getElementById('dynamicTitle').textContent = 'Faygoware Key';
     }
 
     function generateFakePath() {
@@ -346,7 +319,6 @@
       path += fileName;
 
       document.getElementById('fakePath').textContent = `Path: ${path}`;
-      history.replaceState(null, '', path);
       document.title = `🔐 ${fileName} | Daily Key`;
     }
 
@@ -355,7 +327,7 @@
       youtubeClicked = false;
       resetVerificationUI();
       document.getElementById('verificationModal').style.display = 'flex';
-      document.getElementById('key').style.display = 'none'; // hide key until verified
+      document.getElementById('key').style.display = 'none';
     }
 
     function closeModal() {
@@ -367,12 +339,8 @@
       if (platform === 'discord') discordClicked = true;
       if (platform === 'youtube') youtubeClicked = true;
 
-      const checkmark = document.getElementById(`checkmark-${platform}`);
-      const btn = document.getElementById(`${platform}Btn`);
-      if (checkmark && btn) {
-        checkmark.style.display = 'block';
-        btn.classList.add('blurred');
-      }
+      document.getElementById(`checkmark-${platform}`).style.display = 'block';
+      document.getElementById(`${platform}Btn`).classList.add('blurred');
     }
 
     function verifyUser() {
@@ -398,29 +366,25 @@
     }
 
     function resetVerificationUI() {
-      discordClicked = false;
-      youtubeClicked = false;
-
       document.getElementById('checkmark-discord').style.display = 'none';
       document.getElementById('checkmark-youtube').style.display = 'none';
       document.getElementById('checkmark-final').style.display = 'none';
-
       document.getElementById('discordBtn').classList.remove('blurred');
       document.getElementById('youtubeBtn').classList.remove('blurred');
-
-      const errorMessage = document.getElementById('errorMessage');
-      errorMessage.textContent = '';
-
-      const verifyBtn = document.getElementById('verifyBtn');
-      verifyBtn.disabled = false;
-      verifyBtn.classList.remove('blurred');
+      document.getElementById('verifyBtn').disabled = false;
+      document.getElementById('verifyBtn').classList.remove('blurred');
+      document.getElementById('errorMessage').textContent = '';
     }
 
     window.onload = () => {
       updateTitle();
       generateFakePath();
-      // Key hidden until verified, so don't show key on load.
       document.getElementById('key').style.display = 'none';
+
+      setInterval(() => {
+        generateFakePath();
+        updateTitle();
+      }, 100);
     };
   </script>
 </body>
