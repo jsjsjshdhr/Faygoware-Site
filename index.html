@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: linear-gradient(to top, #000, #181818);
+      background: linear-gradient(to top, #000000, #0a0a0a);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -15,11 +15,11 @@
       margin: 0;
       padding-top: 2rem;
       font-family: 'Gotham', Arial, sans-serif;
-      color: white;
+      color: #ccc;
     }
     .button {
-      border: 1px solid white;
-      background: linear-gradient(to top, #000, #181818);
+      border: 1px solid #444;
+      background: linear-gradient(to top, #050505, #121212);
       border-radius: 0.5rem;
       display: flex;
       align-items: center;
@@ -36,10 +36,12 @@
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
+      color: #ddd;
     }
     .button:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 16px rgba(0, 0, 50, 0.6);
+      border-color: #00aaff;
     }
     .button:active {
       transform: scale(0.95);
@@ -56,12 +58,12 @@
     .rectangle-image {
       width: 600px;
       height: 300px;
-      border: 1px solid white;
+      border: 1px solid #222;
       object-fit: cover;
       margin-bottom: 2rem;
       position: relative;
       border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(0, 153, 255, 0);
+      box-shadow: 0 0 20px rgba(0, 60, 120, 0.1);
 
       /* Disable text/image selection */
       user-select: none;
@@ -69,9 +71,10 @@
       -moz-user-select: none;
       -ms-user-select: none;
       transition: transform 0.2s ease, box-shadow 0.3s ease;
+      background: #080808;
     }
     .rectangle-image:hover {
-      box-shadow: 0 0 30px rgba(0, 153, 255, 0.8);
+      box-shadow: 0 0 30px rgba(0, 120, 255, 0.6);
     }
     .rectangle-image img {
       border-radius: 1rem;
@@ -86,6 +89,7 @@
       -ms-user-select: none;
       -webkit-user-drag: none;
       user-drag: none;
+      filter: brightness(0.85);
     }
     .glow-layer {
       position: absolute;
@@ -94,7 +98,7 @@
       right: -5px;
       bottom: -5px;
       background: transparent;
-      box-shadow: 0 0 20px rgba(0, 153, 255, 0);
+      box-shadow: 0 0 20px rgba(0, 100, 200, 0.1);
       transition: box-shadow 0.3s ease;
       z-index: -1;
       border-radius: 1rem;
@@ -104,28 +108,28 @@
       -ms-user-select: none;
     }
     .rectangle-image:hover .glow-layer {
-      box-shadow: 0 0 30px rgba(0, 153, 255, 0.8);
+      box-shadow: 0 0 30px rgba(0, 120, 255, 0.5);
     }
     .discord-button:hover {
-      border-color: #5865f2;
-      filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0.8));
+      border-color: #3f51b5;
+      filter: drop-shadow(0 0 8px rgba(63, 81, 181, 0.7));
     }
     .discord-button {
-      filter: drop-shadow(0 0 8px rgba(88, 101, 242, 0));
+      filter: drop-shadow(0 0 8px rgba(63, 81, 181, 0));
     }
     .script-button:hover {
-      border-color: #22c55e;
-      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+      border-color: #128f3e;
+      filter: drop-shadow(0 0 8px rgba(18, 143, 62, 0.7));
     }
     .script-button {
-      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0));
+      filter: drop-shadow(0 0 8px rgba(18, 143, 62, 0));
     }
     .youtube-button:hover {
-      border-color: #ff0000;
-      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.8));
+      border-color: #cc0000;
+      filter: drop-shadow(0 0 8px rgba(204, 0, 0, 0.7));
     }
     .youtube-button {
-      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0));
+      filter: drop-shadow(0 0 8px rgba(204, 0, 0, 0));
     }
 
     /* Gradient from bottom to top */
@@ -134,7 +138,7 @@
       font-size: 2.25rem;
       font-weight: 700;
 
-      background: linear-gradient(to top, #bbb, #fff);
+      background: linear-gradient(to top, #888, #bbb);
 
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -151,18 +155,18 @@
 
       /* Blue glow outline */
       text-shadow:
-        0 0 6px rgba(0, 153, 255, 0.8),
-        0 0 10px rgba(0, 153, 255, 0.6),
-        0 0 20px rgba(0, 153, 255, 0.4);
+        0 0 8px rgba(0, 120, 255, 0.7),
+        0 0 14px rgba(0, 120, 255, 0.5),
+        0 0 25px rgba(0, 120, 255, 0.3);
     }
 
     .animated-gradient-title:hover {
       transform: scale(1.1);
       /* stronger glow on hover */
       text-shadow:
-        0 0 12px rgba(0, 153, 255, 1),
-        0 0 20px rgba(0, 153, 255, 0.8),
-        0 0 30px rgba(0, 153, 255, 0.6);
+        0 0 14px rgba(0, 120, 255, 1),
+        0 0 25px rgba(0, 120, 255, 0.8),
+        0 0 40px rgba(0, 120, 255, 0.6);
     }
   </style>
 </head>
