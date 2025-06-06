@@ -45,36 +45,50 @@
       display: none;
     }
 
-    .button, .key-copy-btn {
-      border: 1px solid white;
-      background: linear-gradient(to top, #000, #181818);
+    /* Animated gradient border effect */
+    .gradient-outline {
+      position: relative;
+      z-index: 0;
+      background: linear-gradient(to top, #000, #181818); /* old black to grey */
       border-radius: 0.5rem;
-      padding: 0.75rem 2.5rem;
-      font-weight: bold;
+      overflow: hidden;
       color: #ccc;
       cursor: pointer;
-      transition: transform 0.4s ease-in-out;
+      padding: 0.75rem 2.5rem;
+      font-weight: bold;
+      font-size: 1rem;
+      user-select: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
-      width: 180px;
-      position: relative;
-      z-index: 1;
-      overflow: hidden;
     }
 
-    .button:hover:not(.blurred), .key-copy-btn:hover {
-      transform: translateY(-3px);
-      color: white;
+    .gradient-outline::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: conic-gradient(from 0deg, #22c55e, #3b82f6, #22c55e);
+      border-radius: inherit;
+      z-index: -1;
+      animation: rotateBorder 4s linear infinite;
+      mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: destination-out;
+      padding: 2px;
     }
 
-    .middle-button {
-      transform: scale(1.1);
+    .gradient-outline:hover::before {
+      animation-duration: 1.2s;
     }
 
-    .middle-button:hover:not(.blurred) {
-      transform: scale(1.15) translateY(-3px);
+    @keyframes rotateBorder {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .animated-gradient-title {
@@ -85,15 +99,12 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       color: transparent;
-      text-shadow: 0 0 6px rgba(0, 153, 255, 0.8);
+      margin-bottom: 1rem;
+      text-shadow:
+        0 0 6px rgba(0, 153, 255, 0.8),
+        0 0 10px rgba(0, 153, 255, 0.6),
+        0 0 20px rgba(0, 153, 255, 0.4);
       user-select: none;
-      transition: transform 0.3s ease, text-shadow 0.3s ease;
-      cursor: pointer;
-    }
-
-    .animated-gradient-title:hover {
-      transform: scale(1.1);
-      text-shadow: 0 0 12px rgba(0, 153, 255, 1);
     }
 
     #fakePath {
@@ -102,132 +113,21 @@
       margin-top: 1rem;
       font-family: monospace;
     }
-
-    .gradient-outline::before {
-      content: '';
-      position: absolute;
-      top: -3px; left: -3px; right: -3px; bottom: -3px;
-      background: linear-gradient(45deg, #22c55e, #3b82f6, #22c55e);
-      border-radius: 0.5rem;
-      z-index: -1;
-      filter: blur(6px);
-      animation: rotateBorder 4s linear infinite;
-      background-size: 400% 400%;
-    }
-
-    .gradient-outline:hover::before {
-      animation-duration: 1.2s;
-    }
-
-    .gradient-outline {
-      position: relative;
-      z-index: 0;
-    }
-
-    @keyframes rotateBorder {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: #121212;
-      padding: 2rem;
-      border-radius: 1rem;
-      border: 1px solid #333;
-      text-align: center;
-      width: 90%;
-      max-width: 450px;
-      color: #ddd;
-    }
-
-    .error {
-      color: #ff4444;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-
-    .checkmark {
-      position: absolute;
-      top: -12px;
-      right: 10px;
-      font-size: 1.8rem;
-      color: #22c55e;
-      text-shadow: 0 0 10px #22c55e;
-      display: none;
-    }
-
-    .checkmark-center {
-      right: 50%;
-      transform: translateX(50%);
-      top: -28px;
-      font-size: 2.4rem;
-      background: rgba(34, 197, 94, 0.15);
-      border-radius: 50%;
-      padding: 2px 8px;
-      filter: drop-shadow(0 0 8px #22c55e);
-    }
-
-    .blurred {
-      filter: blur(1.5px);
-      pointer-events: none;
-      opacity: 0.5;
-    }
   </style>
 </head>
 <body>
   <h1 class="animated-gradient-title" id="dynamicTitle">Faygoware Key</h1>
 
   <div class="container">
-    <p class="mb-4">This key is the same for everyone and updates daily. You must verify each time to get the key.</p>
+    <p>This key is the same for everyone and updates daily. You must verify each time to get the key.</p>
     <div id="key"></div>
-    <button class="button middle-button gradient-outline" onclick="showVerificationModal()">Get Key</button>
+    <button class="gradient-outline" onclick="revealKey()">Get Key</button>
     <div id="fakePath"></div>
-  </div>
-
-  <div id="verificationModal" class="modal">
-    <div class="modal-content">
-      <h2 class="text-xl mb-4">Verify to Access Key</h2>
-      <p class="mb-4">Click both links below to join our Discord server and subscribe to our YouTube channel to unlock the key.</p>
-
-      <div class="mb-6" style="position: relative;">
-        <div id="checkmark-discord" class="checkmark checkmark-center">✅</div>
-        <a href="https://discord.gg/your-discord-invite" target="_blank" id="discordBtn" class="button gradient-outline" onclick="recordLinkClick('discord')">Join Discord</a>
-      </div>
-
-      <div class="mb-6" style="position: relative;">
-        <div id="checkmark-youtube" class="checkmark checkmark-center">✅</div>
-        <a href="https://youtube.com/your-channel" target="_blank" id="youtubeBtn" class="button gradient-outline" onclick="recordLinkClick('youtube')">YouTube</a>
-      </div>
-
-      <div id="verifySection" class="flex flex-col items-center space-y-2 mt-6">
-        <div id="checkmark-final" style="font-size: 2.8rem; color: #22c55e; display: none;">✅</div>
-        <button id="verifyBtn" class="button middle-button gradient-outline" onclick="verifyUser()">Verify</button>
-      </div>
-
-      <div id="errorMessage" class="error"></div>
-      <button class="button mt-4" onclick="closeModal()">Cancel</button>
-    </div>
   </div>
 
   <audio id="clickSound" src="./computer.mp3"></audio>
 
   <script>
-    document.addEventListener('contextmenu', event => event.preventDefault());
-
-    let discordClicked = false;
-    let youtubeClicked = false;
-
     function toRoman(num) {
       const romanMap = [
         { val: 1000, sym: "M" }, { val: 900, sym: "CM" },
@@ -251,7 +151,9 @@
     function getESTDate() {
       const estFormatter = new Intl.DateTimeFormat('en-US', {
         timeZone: 'America/New_York',
-        year: 'numeric', month: 'numeric', day: 'numeric'
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
       });
       const parts = estFormatter.formatToParts(new Date());
       const dateParts = {};
@@ -269,24 +171,25 @@
       return `FAYGO_${toRoman(year)}_${toRoman(month)}_${toRoman(day)}`;
     }
 
-    function updateKeyDisplay() {
-      const keyDisplay = document.getElementById('key');
-      const newKey = generateDailyKey();
-      keyDisplay.style.display = 'block';
-      keyDisplay.innerHTML = `
-        <div class="text-xl font-mono">${newKey}</div>
-        <button class="key-copy-btn gradient-outline" onclick="copyKey('${newKey}')">Copy Key</button>
+    function revealKey() {
+      const key = generateDailyKey();
+      const keyContainer = document.getElementById('key');
+      keyContainer.innerHTML = `
+        <div class="text-xl font-mono mb-4">${key}</div>
+        <button class="gradient-outline" onclick="copyKey('${key}')">Copy Key</button>
       `;
+      keyContainer.style.display = 'block';
     }
 
-    function copyKey(keyText) {
+    function copyKey(text) {
       const clickSound = document.getElementById("clickSound");
       clickSound.currentTime = 0;
       clickSound.play().catch(() => {});
+
       if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(keyText).catch(() => fallbackCopy(keyText));
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
       } else {
-        fallbackCopy(keyText);
+        fallbackCopy(text);
       }
     }
 
@@ -302,17 +205,12 @@
       document.body.removeChild(textarea);
     }
 
-    function updateTitle() {
-      document.getElementById('dynamicTitle').textContent = 'Faygoware Key';
-    }
-
-    function generateFakePath() {
+    function updateTitleAndPath() {
       const folders = ['system', 'usr', 'bin', 'etc', 'var', 'tmp', 'home', 'data', 'logs', 'config'];
       const files = ['keygen', 'secure', 'auth', 'crypto', 'access', 'token', 'session'];
       const extensions = ['.dat', '.key', '.conf', '.log', '.txt'];
-      const pathLength = Math.floor(Math.random() * 3) + 2;
       let path = '/';
-      for (let i = 0; i < pathLength; i++) {
+      for (let i = 0; i < Math.floor(Math.random() * 3) + 2; i++) {
         path += folders[Math.floor(Math.random() * folders.length)] + '/';
       }
       const fileName = files[Math.floor(Math.random() * files.length)] + extensions[Math.floor(Math.random() * extensions.length)];
@@ -322,69 +220,9 @@
       document.title = `🔐 ${fileName} | Daily Key`;
     }
 
-    function showVerificationModal() {
-      discordClicked = false;
-      youtubeClicked = false;
-      resetVerificationUI();
-      document.getElementById('verificationModal').style.display = 'flex';
-      document.getElementById('key').style.display = 'none';
-    }
-
-    function closeModal() {
-      document.getElementById('verificationModal').style.display = 'none';
-      document.getElementById('errorMessage').textContent = '';
-    }
-
-    function recordLinkClick(platform) {
-      if (platform === 'discord') discordClicked = true;
-      if (platform === 'youtube') youtubeClicked = true;
-
-      document.getElementById(`checkmark-${platform}`).style.display = 'block';
-      document.getElementById(`${platform}Btn`).classList.add('blurred');
-    }
-
-    function verifyUser() {
-      const errorMessage = document.getElementById('errorMessage');
-      const verifyBtn = document.getElementById('verifyBtn');
-      const finalCheckmark = document.getElementById('checkmark-final');
-
-      if (!discordClicked || !youtubeClicked) {
-        errorMessage.textContent = 'Please click both the Discord and YouTube links to verify.';
-        return;
-      }
-
-      errorMessage.textContent = 'Verifying... Please wait 10 seconds.';
-      verifyBtn.disabled = true;
-      verifyBtn.classList.add('blurred');
-
-      setTimeout(() => {
-        errorMessage.textContent = '';
-        finalCheckmark.style.display = 'block';
-        updateKeyDisplay();
-        closeModal();
-      }, 10000);
-    }
-
-    function resetVerificationUI() {
-      document.getElementById('checkmark-discord').style.display = 'none';
-      document.getElementById('checkmark-youtube').style.display = 'none';
-      document.getElementById('checkmark-final').style.display = 'none';
-      document.getElementById('discordBtn').classList.remove('blurred');
-      document.getElementById('youtubeBtn').classList.remove('blurred');
-      document.getElementById('verifyBtn').disabled = false;
-      document.getElementById('verifyBtn').classList.remove('blurred');
-      document.getElementById('errorMessage').textContent = '';
-    }
-
     window.onload = () => {
-      updateTitle();
-      generateFakePath();
-      document.getElementById('key').style.display = 'none';
-
-      setInterval(() => {
-        generateFakePath();
-        updateTitle();
-      }, 100);
+      updateTitleAndPath();
+      setInterval(updateTitleAndPath, 100); // Update every 0.1 seconds
     };
   </script>
 </body>
