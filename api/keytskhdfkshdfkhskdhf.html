@@ -102,15 +102,6 @@
             width: 90%;
             max-width: 400px;
         }
-        .modal-content input {
-            width: 100%;
-            padding: 0.5rem;
-            margin: 0.5rem 0;
-            border: 1px solid white;
-            border-radius: 0.5rem;
-            background: #181818;
-            color: white;
-        }
         .error {
             color: #ff4444;
             font-size: 0.9rem;
@@ -130,13 +121,9 @@
     <div id="verificationModal" class="modal">
         <div class="modal-content">
             <h2 class="text-xl mb-4">Verify to Access Key</h2>
-            <p class="mb-4">Join our Discord server and subscribe to our YouTube channel to unlock the key.</p>
-            <a href="https://discord.gg/your-discord-invite" target="_blank" class="button mb-4">Join Discord</a>
-            <a href="https://youtube.com/your-channel" target="_blank" class="button mb-4">YouTube</a>
-            <input type="text" id="discordUsername" placeholder="Enter your Discord username" />
-            <label class="block text-sm mt-2">
-                <input type="checkbox" id="youtubeSubscribed" /> I have subscribed to the YouTube channel
-            </label>
+            <p class="mb-4">Click both links below to join our Discord server and subscribe to our YouTube channel to unlock the key.</p>
+            <a href="https://discord.gg/your-discord-invite" target="_blank" class="button mb-4" onclick="recordLinkClick('discord')">Join Discord</a>
+            <a href="https://youtube.com/your-channel" target="_blank" class="button mb-4" onclick="recordLinkClick('youtube')">YouTube</a>
             <div id="errorMessage" class="error"></div>
             <button class="button mt-4" onclick="verifyUser()">Verify</button>
             <button class="button mt-2" onclick="closeModal()">Cancel</button>
@@ -148,7 +135,7 @@
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // Generate a random key on each page load
+    // Generate a random key
     function generateRandomKey(length = 12) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         return 'Faygoware_' + Array.from({ length }, () =>
@@ -163,16 +150,20 @@
     }
 
     function updateKeyDisplay() {
-        const newKey = generateRandomKey(12);
         const keyDisplay = document.getElementById('key');
-        keyDisplay.textContent = newKey;
+        let currentKey = localStorage.getItem('currentKey');
+        if (!currentKey) {
+            currentKey = generateRandomKey(12);
+            localStorage.setItem('currentKey', currentKey);
+            saveKey(currentKey);
+        }
+        keyDisplay.textContent = currentKey;
         keyDisplay.style.display = 'block';
-        saveKey(newKey);
-        document.getElementById('getKeyButton').style.display = 'none';
+        keyDisplay.innerHTML = `${currentKey} <button class="button ml-4" onclick="copyKey()">Copy Key</button>`;
     }
 
     function copyKey() {
-        const keyText = document.getElementById('key').textContent;
+        const keyText = document.getElementById('key').textContent.split(' ')[0]; // Extract key without button text
         const clickSound = document.getElementById("clickSound");
         clickSound.currentTime = 0;
         clickSound.play().catch((e) => console.log("Audio playback failed:", e));
@@ -233,7 +224,6 @@
         const isVerified = localStorage.getItem('isVerified');
         if (isVerified === 'true') {
             updateKeyDisplay();
-            document.getElementById('key').innerHTML = `${document.getElementById('key').textContent} <button class="button ml-4" onclick="copyKey()">Copy Key</button>`;
         } else {
             document.getElementById('verificationModal').style.display = 'flex';
         }
@@ -244,26 +234,25 @@
         document.getElementById('errorMessage').textContent = '';
     }
 
+    function recordLinkClick(platform) {
+        localStorage.setItem(`${platform}Clicked`, 'true');
+    }
+
     function verifyUser() {
-        const discordUsername = document.getElementById('discordUsername').value.trim();
-        const youtubeSubscribed = document.getElementById('youtubeSubscribed').checked;
+        const discordClicked = localStorage.getItem('discordClicked');
+        const youtubeClicked = localStorage.getItem('youtubeClicked');
         const errorMessage = document.getElementById('errorMessage');
 
-        if (!discordUsername) {
-            errorMessage.textContent = 'Please enter your Discord username.';
-            return;
-        }
-        if (!youtubeSubscribed) {
-            errorMessage.textContent = 'Please confirm you have subscribed to the YouTube channel.';
+        if (discordClicked !== 'true' || youtubeClicked !== 'true') {
+            errorMessage.textContent = 'Please click both the Discord and YouTube links to verify.';
             return;
         }
 
-        // Store verification status and Discord username
+        // Store verification status
         localStorage.setItem('isVerified', 'true');
-        localStorage.setItem('discordUsername', discordUsername);
         closeModal();
         updateKeyDisplay();
-        document.getElementById('key').innerHTML = `${document.getElementById('key').textContent} <button class="button ml-4" onclick="copyKey()">Copy Key</button>`;
+        copyKey(); // Automatically copy the key after verification
     }
 
     // Initial setup
